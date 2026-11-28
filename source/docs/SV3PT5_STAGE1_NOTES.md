@@ -13,3 +13,7 @@ Additional shared attack and Ability mechanics and Bill's Transfer, including it
 ## v0.69.639 stage 4
 
 Eleven more battle-enabled prints using shared discard, timing, conditional prize, delayed-counter, survival and Stadium mechanisms. Physical hand Energy must be provided by compatible mixed-set Trainers; no Zone conversion. Mixed-only restriction and all remaining unsupported cards are retained. Full gameplay and APK validation pending CI.
+
+## v0.69.640 stage 5
+
+Nine additional battle-enabled prints using shared attack copying, conditional HP, damage-counter draw, Bench synergy, spread and weakness protection. Remaining unsupported cards and mixed-only restriction are retained. Full gameplay and APK validation pending CI.

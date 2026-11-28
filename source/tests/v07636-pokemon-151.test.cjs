@@ -10,7 +10,7 @@ test('pinned 151 catalogue has all 207 numbered prints with exact identity, rule
   if(c.kind==='pokemon'){assert.deepEqual([c.hp,c.types,c.evolvesFrom,c.retreat,c.weakness,c.resistance],[p.hp,p.types,p.evolvesFrom,p.retreat,p.weakness,p.resistance]);assert.deepEqual(c.attacks.map(a=>[a.name,a.cost,a.damageText||'',a.text]),p.attacks.map(a=>[a.name,a.cost.map(x=>codes[x]).join(''),a.damage,a.text]));assert.deepEqual(c.abilities.map(a=>[a.name,a.text]),p.abilities.map(a=>[a.name,a.text]));for(const a of c.attacks)if(c.battleEnabled){assert.ok(fx.supportsEffect(a.effect));assert.equal(a.effect.type==='noop',!a.text);}}
   if(c.kind==='trainer')assert.equal(c.text,p.rules[0]);if(!c.battleEnabled){assert.equal(c.deckEligible,false);assert.ok(c.support.reasons.length);}
  }
- for(const n of [65,113,132,151,152,153,154])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,false);
+ for(const n of [65,113,132,152,153,154])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,false);
  for(const n of [1,2,13,17,32,50,63,83,86,115,206,207])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,true);
  assert.equal(sv.cardById('sv3pt5-207').deckEligible,false);
  assert.ok(sv.CARDS.filter(c=>c.battleEnabled).length>=50);
@@ -33,7 +33,7 @@ for(const side of ['player','opponent']){
 test('151 stage 2 exact shared effects and explicit remaining dependencies',()=>{
  const by=n=>sv.cardById('sv3pt5-'+n);
  for(const n of [3,4,8,10,18,22,25,35,38,52,55,56,59,82,88,89,97,98,120,123,125,126,127,129,130,134,135,136,144,149,155,159,165])assert.ok(by(n).battleEnabled,`${n}: ${by(n).support.reasons}`);
- for(const n of [53,65,113,132,143,145,151,152,153,154])assert.equal(by(n).battleEnabled,false,by(n).name);
+ for(const n of [53,65,113,132,143,145,152,153,154])assert.equal(by(n).battleEnabled,false,by(n).name);
  for(const c of sv.CARDS.filter(c=>c.battleEnabled)){
    for(const a of c.abilities||[])assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}`);
    if(c.kind==='trainer')assert.ok(fx.supportsEffect(c.effect),c.id);
@@ -124,3 +124,28 @@ for(const side of ['player','opponent']){
   attack(s,side);assert.ok(them.discard.some(c=>c.uid==='151-638-mill1'));assert.ok(them.discard.some(c=>c.uid==='151-638-mill2'));assert.ok(!them.discard.some(c=>c.uid==='151-638-mill3'));
  });
 }
+
+// Stage 5: shared copy selection and scoped modifiers; all alternate prints agree.
+test('151 stage 5 exact attack copy, damage counters and modifiers',()=>{
+ const by=n=>sv.cardById('sv3pt5-'+n);
+ for(const n of [40,85,104,106,151,164,187,193,205]){
+  const c=by(n);assert.ok(c.battleEnabled,`${c.id}: ${c.support.reasons}`);
+  for(const a of [...(c.attacks||[]),...(c.abilities||[])])assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}`);
+  if(c.kind==='trainer')assert.ok(fx.supportsEffect(c.effect),c.id);
+ }
+ assert.deepEqual(by(40).attacks[0].effect,{type:'bonusDamage',amount:90,condition:{type:'supporterPlayed'}});
+ assert.deepEqual(by(40).abilities[0].effect,{type:'modifier',stat:'maxHp',amount:100,scope:'self',duration:'whileInPlay',filter:{hasSpecialEnergy:true}});
+ assert.deepEqual(by(40).abilities,by(187).abilities);
+ assert.equal(by(85).abilities[0].oncePerTurn,true);
+ assert.deepEqual(by(85).abilities[0].effect.effects,[{type:'placeDamageCounters',target:'self',amount:10},{type:'draw',amount:1}]);
+ assert.equal(by(104).abilities[0].benchOnly,true);
+ assert.deepEqual(by(104).abilities[0].effect.filter,{name:'Marowak'});
+ assert.equal(by(104).abilities[0].effect.stat,'attackDamageActiveOnly');
+ assert.deepEqual(by(106).attacks[0].effect.effects,[{type:'bonusDamage',amount:10},{type:'benchDamage',side:'opponent',all:true,amount:10},{type:'switch',target:'self',optional:false}]);
+ for(const n of [151,193,205]){
+  assert.equal(by(n).attacks[0].cost,'CCC');
+  assert.deepEqual(by(n).attacks[0].effect,{type:'copyAttack',source:'opponentActive',ignoreUseCosts:true,sm12Copy:true});
+  assert.deepEqual(by(n).abilities,by(151).abilities);
+ }
+ assert.deepEqual(by(164).effect,{type:'weaknessGuard',duration:'whileInPlay',scope:'self',filter:{stage:'Basic'}});
+});

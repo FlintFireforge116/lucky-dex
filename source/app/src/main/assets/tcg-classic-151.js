@@ -34,7 +34,29 @@ const optional=(label,effect)=>({type:'chooseOption',options:[{label:'Do not use
 // 151 stage 3: exact printed text; reuse established engine effects.
  
 // 151 stage 4: exact text shared mechanics, including physical hand Energy.
+ 
+// 151 stage 5: shared attack copying, HP modifiers and bench synergy.
+function stage5Attack(a){
+ const t=a.text||'';
+ if(a.name==='Friend Tackle'&&t==='If you played a Supporter card from your hand during this turn, this attack does 90 more damage.')return bonus(90,'supporterPlayed');
+ if(a.name==='Twister Kick'&&t==="This attack does 10 damage to each of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.) Switch this Pokémon with 1 of your Benched Pokémon.")return seq({type:'bonusDamage',amount:10},{type:'benchDamage',side:'opponent',all:true,amount:10},{type:'switch',target:'self',optional:false});
+ if(a.name==='Genome Hacking'&&t==="Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.")return {type:'copyAttack',source:'opponentActive',ignoreUseCosts:true,sm12Copy:true};
+ return null;
+}
+function stage5Ability(a){
+ const t=a.text||'';
+ if(a.name==='Expanding Body'&&t==='If this Pokémon has any Special Energy attached, it gets +100 HP.')return passive('maxHp',100,'self',{hasSpecialEnergy:true});
+ if(a.name==='Zooming Draw'&&t==='Once during your turn, you may put 1 damage counter on this Pokémon. If you do, draw a card.')return activate(seq({type:'placeDamageCounters',target:'self',amount:10},{type:'draw',amount:1}));
+ if(a.name==='Cheering Bone'&&t==="As long as this Pokémon is on your Bench, attacks used by your Marowak do 30 more damage to your opponent's Active Pokémon (before applying Weakness and Resistance).")return {...passive('attackDamageActiveOnly',30,'team',{name:'Marowak'}),benchOnly:true};
+ return null;
+}
+function stage5Trainer(c,text){
+ if(c.name==='Protective Goggles'&&text==='The Basic Pokémon this card is attached to has no Weakness.')return {type:'weaknessGuard',duration:'whileInPlay',scope:'self',filter:{stage:'Basic'}};
+ return null;
+}
+
 function stage4Attack(a){
+ const fifth=stage5Attack(a);if(fifth)return fifth;
  const t=a.text||'';
  if(a.name==='Twin Cannons'&&t==='Discard up to 2 Basic Water Energy cards from your hand. This attack does 140 damage for each card you discarded in this way.')return {type:'chooseDiscardForBonus',zone:'hand',max:2,amount:140,filter:{kind:'energy',basicEnergy:true,subtype:'Water'}};
  if(a.name==='Menacing Fangs'&&t==='Your opponent discards 2 cards from their hand.')return {type:'sm7Rule',rule:'sm9HandDiscard',amount:2,opponentChooses:true};
@@ -44,6 +66,7 @@ function stage4Attack(a){
  return null;
 }
 function stage4Ability(a){
+ const fifth=stage5Ability(a);if(fifth)return fifth;
  const t=a.text||'';
  if(a.name==='Evolutionary Advantage'&&t==='If you go second, this Pokémon can evolve during your first turn.')return {type:'passive',effect:{type:'evolutionTimingOverride',firstTurn:true}};
  if(a.name==='Guts'&&t==='If this Pokémon would be Knocked Out by damage from an attack, flip a coin. If heads, this Pokémon is not Knocked Out, and its remaining HP becomes 10.')return {type:'passive',effect:{type:'koGuard',mode:'surviveCoin',remainingHp:10,attackOnly:true}};
@@ -51,6 +74,7 @@ function stage4Ability(a){
  return null;
 }
 function stage4Trainer(c,text){
+ const fifth=stage5Trainer(c,text);if(fifth)return fifth;
  if(c.name==='Cycling Road'&&text==="Once during each player's turn, that player may discard a Basic Energy card from their hand in order to draw a card.")return {type:'stadiumAction',effect:{type:'sm7Rule',rule:'sm10Pay',amount:1,filter:{kind:'energy',basicEnergy:true},after:{type:'draw',amount:1},optional:true}};
  return null;
 }
