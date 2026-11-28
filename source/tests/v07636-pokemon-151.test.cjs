@@ -10,7 +10,7 @@ test('pinned 151 catalogue has all 207 numbered prints with exact identity, rule
   if(c.kind==='pokemon'){assert.deepEqual([c.hp,c.types,c.evolvesFrom,c.retreat,c.weakness,c.resistance],[p.hp,p.types,p.evolvesFrom,p.retreat,p.weakness,p.resistance]);assert.deepEqual(c.attacks.map(a=>[a.name,a.cost,a.damageText||'',a.text]),p.attacks.map(a=>[a.name,a.cost.map(x=>codes[x]).join(''),a.damage,a.text]));assert.deepEqual(c.abilities.map(a=>[a.name,a.text]),p.abilities.map(a=>[a.name,a.text]));for(const a of c.attacks)if(c.battleEnabled){assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}: ${fx.validateEffect(a.effect).join('; ')}`);assert.equal(a.effect.type==='noop',!a.text);}}
   if(c.kind==='trainer')assert.equal(c.text,p.rules[0]);if(!c.battleEnabled){assert.equal(c.deckEligible,false);assert.ok(c.support.reasons.length);}
  }
- for(const n of [65,113,132,154])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,false);
+ for(const n of [65,113,132])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,false);
  for(const n of [1,2,13,17,32,50,63,83,86,115,206,207])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,true);
  assert.equal(sv.cardById('sv3pt5-207').deckEligible,false);
  assert.ok(sv.CARDS.filter(c=>c.battleEnabled).length>=50);
@@ -33,7 +33,7 @@ for(const side of ['player','opponent']){
 test('151 stage 2 exact shared effects and explicit remaining dependencies',()=>{
  const by=n=>sv.cardById('sv3pt5-'+n);
  for(const n of [3,4,8,10,18,22,25,35,38,52,55,56,59,82,88,89,97,98,120,123,125,126,127,129,130,134,135,136,144,149,155,159,165])assert.ok(by(n).battleEnabled,`${n}: ${by(n).support.reasons}`);
- for(const n of [65,113,132,154])assert.equal(by(n).battleEnabled,false,by(n).name);
+ for(const n of [65,113,132])assert.equal(by(n).battleEnabled,false,by(n).name);
  for(const c of sv.CARDS.filter(c=>c.battleEnabled)){
    for(const a of c.abilities||[])assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}`);
    if(c.kind==='trainer')assert.ok(fx.supportsEffect(c.effect),c.id);
@@ -290,10 +290,10 @@ for(const side of ['player','opponent']){
 }
 
 // Stage 9: real printed Dome and Helix Fossil Abilities and their evolution lines.
-test('151 stage 9 enables seven prints, preserves Amber gate and includes missing printed Fossil Abilities',()=>{
+test('151 stage 9 enables seven prints, includes missing printed Fossil Abilities',()=>{
  for(const n of [138,139,140,141,152,153,180])assert.ok(sv.cardById('sv3pt5-'+n).battleEnabled,n);
- assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length,188);
- assert.equal(sv.cardById('sv3pt5-154').battleEnabled,false);assert.equal(sv.cardById('sv3pt5-142').battleEnabled,false);
+ assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length>=188,true);
+ 
  assert.equal(sv.cardById('sv3pt5-152').abilities[0].name,'Domed Armor');assert.equal(sv.cardById('sv3pt5-153').abilities[0].name,'Helical Swell');
 });
 for(const side of ['player','opponent']){
@@ -326,3 +326,29 @@ for(const side of ['player','opponent']){
 for(const side of ['player','opponent'])test(side+' Antique Fossils are status immune, cannot retreat, and voluntary discard awards no Prize',()=>{
  for(const id of [152,153]){const {s,us,them}=scene(side,'sv3pt5-'+id);const target=us.active;for(const status of ['sleep','confusion','paralysis','poison','burn'])assert.ok(fx.statusIsPrevented(s,target,data.cardById,status));assert.ok(!core.legalActions(s,side).some(a=>a.type==='retreat'));const prizes=them.prizes.length;const a=core.legalActions(s,side).find(a=>a.type==='discardFossil'&&a.target==='active');assert.ok(a);core.applyAction(s,side,a);assert.equal(them.prizes.length,prizes);assert.ok(us.discard.some(r=>r.uid===target.uid&&r.cardId===target.cardId));assert.equal(s.phase,'promote');}
 });
+
+// Stage 10: Amber, Aerodactyl, Porygon, Eevee and Haunter.
+test('151 stage 10 enables five prints',()=>{for(const n of [93,133,137,142,154])assert.ok(sv.cardById('sv3pt5-'+n).battleEnabled,n);assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length,193);assert.equal(sv.cardById('sv3pt5-154').abilities[0].name,'Amber Protection');});
+for(const side of ['player','opponent']){
+ const foe=side==='player'?'opponent':'player';
+ test(side+' Amber prevents opposing Ability counters, not attack damage, and evolves into Aerodactyl',()=>{
+  const {s,us,them}=scene(side,'sv3pt5-154');const p=us.active;
+  const context={state:s,side:foe,foeSide:side,attacker:them.active,cardById:data.cardById,isAbility:true};
+  fx.applyEffect({type:'placeDamageCounters',target:'opponentActive',amount:20},context);assert.equal(p.damage,0);
+  us.swsh10CologneTurn=s.turnNumber;fx.applyEffect({type:'placeDamageCounters',target:'opponentActive',amount:20},context);assert.equal(p.damage,20);delete us.swsh10CologneTurn;
+  fx.applyEffect({type:'placeDamageCounters',target:'opponentActive',amount:10},{...context,isAbility:false,isAttack:true});assert.equal(p.damage,30);
+  us.hand=[{uid:'aero',cardId:'sv3pt5-142'}];p.playedOnSideTurn=1;const evolve=core.legalActions(s,side).find(a=>a.type==='evolve');assert.ok(evolve);core.applyAction(s,side,evolve);assert.equal(p.cardId,'sv3pt5-142');assert.equal(p.damage,30);
+ });
+ test(side+' Devolution Ray retains damage and attachments and returns only highest stage to hand',()=>{
+  const {s,them}=scene(side,'sv3pt5-142');const p=them.active=core.makePokemonSlot('sv3pt5-6',1,'devo');p.stack=['sv3pt5-4','sv3pt5-5','sv3pt5-6'];p.energy={Fire:1};them.hand=[];attack(s,side,1);assert.equal(p.damage,100);assert.equal(p.cardId,'sv3pt5-5');assert.deepEqual(p.stack,['sv3pt5-4','sv3pt5-5']);assert.equal(p.energy.Fire,1);assert.equal(them.hand[0].cardId,'sv3pt5-6');
+ });
+ test(side+' Conversion 4 retains chosen Weakness until moving to Bench',()=>{
+  const {s,us,them}=scene(side,'sv3pt5-137');const p=them.active=core.makePokemonSlot('sv3pt5-3',1,'conversion');attack(s,side);const pick=core.legalActions(s,side).find(x=>x.choiceOption===2);assert.ok(pick);core.applyAction(s,side,pick);assert.equal(p.weaknessOverride,'Water');assert.equal(p.weaknessOverrideExpiresTurn,undefined);const water=core.makePokemonSlot('sv3pt5-7',1,'water');assert.equal(fx.attackDamageWithState(s,side,water,foe,p,30,data.cardById),60);fx.clearTemporaryEffects(s,p);assert.equal(p.weaknessOverride,undefined);
+ });
+ test(side+' Colorful Friends selects up to three different types and no duplicate type',()=>{
+  const {s,us}=scene(side,'sv3pt5-133');us.hand=[];us.deck=[1,2,4,7,158].map(n=>({uid:'search'+n,cardId:'sv3pt5-'+n}));attack(s,side);for(const n of [1,4,7]){const legal=core.legalActions(s,side);if(n!==1)assert.ok(!legal.some(a=>a.choiceCardId==='sv3pt5-2'));assert.ok(!legal.some(a=>a.choiceCardId==='sv3pt5-158'));const pick=legal.find(a=>a.choiceCardId==='sv3pt5-'+n);assert.ok(pick,JSON.stringify(legal));core.applyAction(s,side,pick);}assert.deepEqual(us.hand.filter(r=>r.uid.startsWith('search')).map(r=>r.cardId),['sv3pt5-1','sv3pt5-4','sv3pt5-7']);assert.notEqual(s.phase,'effectChoice');
+ });
+ test(side+' Spirit Return on hand evolution chooses opposing Supporter only, and is optional',()=>{
+  for(const skip of [false,true]){const {s,us,them}=scene(side,'sv3pt5-92');us.active.playedOnSideTurn=1;us.hand=[{uid:'haunter',cardId:'sv3pt5-93'}];them.hand=[];them.discard=[{uid:'sup',cardId:'sv3pt5-160'},{uid:'item',cardId:'sv3pt5-155'}];const ev=core.legalActions(s,side).find(a=>a.type==='evolve');assert.ok(ev);core.applyAction(s,side,ev);assert.equal(s.phase,'effectChoice');const legal=core.legalActions(s,side);assert.ok(!legal.some(a=>a.choiceDiscardIndex===1));const pick=legal.find(a=>skip?a.choiceSkip:a.choiceDiscardIndex===0);assert.ok(pick,JSON.stringify(legal));core.applyAction(s,side,pick);assert.equal(them.hand.some(r=>r.uid==='sup'),!skip);assert.equal(them.discard.some(r=>r.uid==='item'),true);}
+ });
+}

@@ -38,6 +38,9 @@ const optional=(label,effect)=>({type:'chooseOption',options:[{label:'Do not use
 // 151 stage 5: shared attack copying, HP modifiers and bench synergy.
 function stage5Attack(a){
  const t=a.text||'';
+ if(a.name==='Devolution Ray'&&t==="If your opponent's Active Pokémon is an evolved Pokémon, devolve it by putting the highest Stage Evolution card on it into your opponent's hand.")return {type:'sm7Rule',rule:'sv151DevolutionRay'};
+ if(a.name==='Conversion 4'&&t==='Choose Grass, Fire, Water, Lightning, Psychic, Fighting, Darkness, Metal, or Dragon type. Until the Defending Pokémon leaves the Active Spot, its Weakness is now that type. (The amount of Weakness doesn\'t change.)')return {type:'sm7Rule',rule:'sv151Conversion4'};
+ if(a.name==='Colorful Friends'&&t==='Search your deck for up to 3 Pokémon of different types, reveal them, and put them into your hand. Then, shuffle your deck.')return {type:'sm7Rule',rule:'sv151ColorfulFriends'};
  if(a.name==='Tentacular Return'&&t==="Put an Energy attached to your opponent's Active Pokémon into their hand.")return {type:'sm7Rule',rule:'sv151Giovanni',returnOnly:true};
  if(a.name==='Aqua Split'&&t==="This attack also does 30 damage to 2 of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)")return {type:'multiTargetDamage',target:'opponentBench',count:2,amount:30};
  if(a.name==='Charismatic Drill'&&t==="If you played Giovanni's Charisma from your hand during this turn, this attack does 140 more damage.")return {type:'bonusDamage',amount:140,condition:{type:'sm10Supporter',name:"Giovanni's Charisma"}};
@@ -168,6 +171,7 @@ function stage2Attack(a){
  return null;
 }
 function stage2Ability(a){
+ if(a.name==='Spirit Return'&&a.text==="When you play this Pokémon from your hand to evolve 1 of your Pokémon during your turn, you may put a Supporter card from your opponent's discard pile into their hand.")return evo({type:'sm7Rule',rule:'sv151SpiritReturn'});
  if(a.name==='Primordial Tentacles'&&a.text==="As long as this Pokémon is in the Active Spot, your opponent's Active Pokémon can't retreat.")return {type:'passive',activeOnly:true,effect:{type:'sm7Rule',rule:'sv151PrimordialTentacles'}};
  if(a.name==='Ancient Way'&&a.text==="Apply Weakness for your opponent's Active Pokémon as ×4 instead.")return {type:'passive',effect:{type:'weaknessMultiplier',multiplier:4}};
  const third=stage3Ability(a);if(third)return third;
@@ -243,16 +247,16 @@ function makeCard(c){
   const attacks=c.attacks.map(a=>{const effect=attackEffect(a);if(effect.type==='unsupported')reasons.push('Unimplemented attack: '+a.name);return {name:a.name,cost:a.cost.map(t=>codes[t]).join(''),damage:a.damage.includes('×')?0:Number(a.damage.match(/\d+/)?.[0]||0),damageText:a.damage||null,text:a.text,effect};});
   const abilities=c.abilities.map(a=>{const implemented=stage2Ability(a);if(!implemented)reasons.push('Unimplemented Ability: '+a.name);return {name:a.name,text:a.text,printedPowerType:'ability',disabledByStatus:false,...(implemented||{type:'passive',effect:unsupported})};});
 
-  if(c.evolvesFrom==='Antique Old Amber')reasons.push('Antique Fossil evolution dependency not implemented');
+
   const ex=c.subtypes.includes('ex'),energyTypes=[...new Set(c.attacks.flatMap(a=>a.cost).filter(t=>t!=='Colorless'))];
   const roles=[...new Set(attacks.flatMap(a=>/heal/i.test(a.text)?['healing']:/search/i.test(a.text)?['search']:/draw/i.test(a.text)?['draw']:[]))];
   result={...common,kind:'pokemon',stage:c.subtypes.find(t=>['Basic','Stage 1','Stage 2'].includes(t)),hp:c.hp,types:c.types,subtype:c.types[0],evolvesFrom:c.evolvesFrom,retreat:c.retreat,weakness:c.weakness,weaknessValue:c.weaknessValue,resistance:c.resistance,resistanceValue:c.resistanceValue,attacks,abilities,isEx:ex,pokemonEx:ex,ruleBox:ex,tera:c.subtypes.includes('Tera'),points:ex?2:1,prizeCards:ex?2:1,deckMeta:{roles,synergy:roles,energyTypes,preferredEnergyTypes:energyTypes,conditionalAttackEnergyTypes:[],preferredPartners:c.evolvesFrom?[c.evolvesFrom]:[],inflicts:[],payoffs:[]}};
  }else if(c.kind==='trainer'){
   const text=c.rules[0]||'',effect=c.name==='Switch'&&text==='Switch your Active Pokémon with 1 of your Benched Pokémon.'?switchSelf:(stage2Trainer(c,text)||unsupported);
-  if(effect.type==='unsupported'&&!['sv3pt5-152','sv3pt5-153'].includes(c.id))reasons.push('Unimplemented Trainer: '+c.name);
+  if(effect.type==='unsupported'&&!['sv3pt5-152','sv3pt5-153','sv3pt5-154'].includes(c.id))reasons.push('Unimplemented Trainer: '+c.name);
   result={...common,kind:'trainer',trainerType:c.subtypes[0]==='Pokémon Tool'?'Tool':c.subtypes[0],text,effect};
   // Compact source omits Trainer Abilities. Verified against printed 151 cards 152/153.
-  if(['sv3pt5-152','sv3pt5-153'].includes(c.id))Object.assign(result,{hp:60,stage:'Basic',types:['Colorless'],subtype:'Colorless',retreat:0,prizeCards:1,attacks:[],effect:{type:'playFossil',hp:60,subtype:'Colorless',canRetreat:false,statusImmune:true,countsAsKnockout:true},abilities:[c.id==='sv3pt5-152'?{name:'Domed Armor',text:'This Pokémon takes 30 less damage from attacks (after applying Weakness and Resistance).',printedPowerType:'ability',disabledByStatus:false,...passive('damageReduction',30)}:{name:'Helical Swell',text:"As long as this Pokémon is in the Active Spot, your opponent can't play any Stadium cards from their hand.",printedPowerType:'ability',disabledByStatus:false,type:'passive',activeOnly:true,effect:{type:'sm7Rule',rule:'sv151HelicalSwell'}}]});
+  if(['sv3pt5-152','sv3pt5-153','sv3pt5-154'].includes(c.id))Object.assign(result,{hp:60,stage:'Basic',types:['Colorless'],subtype:'Colorless',retreat:0,prizeCards:1,attacks:[],effect:{type:'playFossil',hp:60,subtype:'Colorless',canRetreat:false,statusImmune:true,countsAsKnockout:true},abilities:[c.id==='sv3pt5-154'?{name:'Amber Protection',text:"Prevent all effects of your opponent's Pokémon's Abilities done to this Pokémon.",printedPowerType:'ability',disabledByStatus:false,type:'passive',effect:{type:'sm7Rule',rule:'sv151AmberProtection'}}:c.id==='sv3pt5-152'?{name:'Domed Armor',text:'This Pokémon takes 30 less damage from attacks (after applying Weakness and Resistance).',printedPowerType:'ability',disabledByStatus:false,...passive('damageReduction',30)}:{name:'Helical Swell',text:"As long as this Pokémon is in the Active Spot, your opponent can't play any Stadium cards from their hand.",printedPowerType:'ability',disabledByStatus:false,type:'passive',activeOnly:true,effect:{type:'sm7Rule',rule:'sv151HelicalSwell'}}]});
  }else{
   result={...common,kind:'energy',basicEnergy:true,specialEnergy:false,energyType:c.types[0],subtype:c.types[0],effect:noop,text:''};
  }
