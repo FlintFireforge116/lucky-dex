@@ -12,7 +12,7 @@ const synergy=require('../app/src/main/assets/tcg-deck-synergy.js');
 const emptyLocalCatalogues=new Set(['bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10','sm2','sm5','sm6']);
 // DET1 and the three prerequisite SWSH promo prints are deliberately mixed-only.
 // Each has a separate mixed-set audit below; never skip a complete expansion here.
-const mixedOnlyCatalogues=new Set(['det1','swshp','sv3pt5']);
+const mixedOnlyCatalogues=new Set(['det1','swshp']);
 function ownedFor(set){return classic.CARDS.filter(c=>c.setId===set&&c.battleEnabled&&c.deckEligible!==false).map(c=>({gameplayId:c.id,quantity:4}));}
 function trainerCounts(ids){
  const byName=new Map();
@@ -178,19 +178,18 @@ test('CPU uses the same improved shared builder and keeps valid single-/mixed-er
  }
 });
 
-// 151 is not a complete expansion yet. Test the intentional mixed-pool stage
-// separately, exactly as the existing Detective Pikachu/promo exceptions.
-test('151 temporary mixed-only catalogue retains a real selected core and legal mixed decks',()=>{
+// Completed 151 must support both standalone and mixed decks.
+test('151 complete catalogue supports standalone and mixed decks',()=>{
  const sets=['sv3pt5','sv3'],owned=sets.flatMap(ownedFor),cpu=require('../app/src/main/assets/tcg-classic-opponents.js');
- assert.ok(mixedOnlyCatalogues.has('sv3pt5'));
+ assert.ok(!mixedOnlyCatalogues.has('sv3pt5'));
  for(const [style,randomSeed] of [['competitive',3],['random',24]]){
-  assert.equal(builder.buildDeck(ownedFor('sv3pt5'),{sets:['sv3pt5'],style,randomSeed}).ok,false);
+  assertDeckQuality(builder.buildDeck(ownedFor('sv3pt5'),{sets:['sv3pt5'],style,randomSeed}),ownedFor('sv3pt5'),'151/'+style);
   const result=builder.buildDeck(owned,{sets,style,randomSeed,types:['Fire'],focusCardId:'sv3pt5-6'});
   assertDeckQuality(result,owned,'151+Obsidian Flames/'+style);
   assert.ok(result.cards.includes('sv3pt5-6'),'retains the selected 151 Charizard ex');
   assert.ok(result.cards.every(id=>sets.includes(classic.cardById(id).setId)));
  }
- assert.equal(cpu.generate({sets:['sv3pt5'],type:'Fire',seed:3}).ok,false);
+ assert.ok(cpu.generate({sets:['sv3pt5'],type:'Fire',seed:3}).ok);
  const result=cpu.generate({sets,type:'Fire',seed:42});
  assert.ok(result.ok,result.error);assert.ok(classic.validateDeck(result.cards).ok);
  assert.deepEqual(decks.analyzeDeck(result.cards,result.energyTypes).missingEnergyTypes,[]);

@@ -10,15 +10,15 @@ test('pinned 151 catalogue has all 207 numbered prints with exact identity, rule
   if(c.kind==='pokemon'){assert.deepEqual([c.hp,c.types,c.evolvesFrom,c.retreat,c.weakness,c.resistance],[p.hp,p.types,p.evolvesFrom,p.retreat,p.weakness,p.resistance]);assert.deepEqual(c.attacks.map(a=>[a.name,a.cost,a.damageText||'',a.text]),p.attacks.map(a=>[a.name,a.cost.map(x=>codes[x]).join(''),a.damage,a.text]));assert.deepEqual(c.abilities.map(a=>[a.name,a.text]),p.abilities.map(a=>[a.name,a.text]));for(const a of c.attacks)if(c.battleEnabled){assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}: ${fx.validateEffect(a.effect).join('; ')}`);assert.equal(a.effect.type==='noop',!a.text);}}
   if(c.kind==='trainer')assert.equal(c.text,p.rules[0]);if(!c.battleEnabled){assert.equal(c.deckEligible,false);assert.ok(c.support.reasons.length);}
  }
- for(const n of [65])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,false);
+ for(const n of [65,188,201])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,true);
  for(const n of [1,2,13,17,32,50,63,83,86,115,206,207])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,true);
  assert.equal(sv.cardById('sv3pt5-207').deckEligible,false);
  assert.ok(sv.CARDS.filter(c=>c.battleEnabled).length>=50);
 });
-test('151 player and CPU selectors are registered, with explicit mixed-pool-only stage gate',()=>{
+test('151 player and CPU selectors are registered, with standalone deck generation',()=>{
  for(const ids of [builder.SET_IDS,opp.SETS]){assert.ok(ids.includes('sv3pt5'));assert.match(picker.html({ids,selected:['sv3pt5']}),/data-set-choice="sv3pt5"/);}
  const rows=sv.CARDS.filter(c=>c.battleEnabled&&c.deckEligible!==false).map(c=>({gameplayId:c.id,quantity:4}));
- assert.equal(builder.buildDeck(rows,{sets:['sv3pt5']}).ok,false);assert.equal(opp.generate({sets:['sv3pt5'],type:'Grass',seed:3}).ok,false);
+ assert.equal(builder.buildDeck(rows,{sets:['sv3pt5']}).ok,true);assert.equal(opp.generate({sets:['sv3pt5'],type:'Grass',seed:3}).ok,true);
 });
 const deck=[...Array(4).fill('sv1-30'),...Array(4).fill('sv1-32'),...Array(4).fill('sv1-33'),...Array(4).fill('sv1-36'),...Array(4).fill('sv1-188'),...Array(4).fill('sv1-180'),...Array(4).fill('sv1-189'),...Array(2).fill('sv1-194')];
 function scene(side,id){const foe=side==='player'?'opponent':'player',s=core.createBattle({format:'classic',playerDeck:deck,opponentDeck:deck,seed:32,firstSide:side,playerEnergyTypes:['Grass','Fire','Water','Lightning','Fighting','Psychic'],opponentEnergyTypes:['Grass','Fire','Water','Lightning','Fighting','Psychic']});s.phase='battle';s.activeSide=side;s.turnNumber=8;for(const who of [side,foe]){const b=s.sides[who];b.turnCount=4;b.active=core.makePokemonSlot(who===side?id:'sv1-86',1,who+'a');b.active.energy={Fire:4,Grass:4,Water:4,Lightning:4,Fighting:4,Psychic:4};b.bench=['sv1-32','sv1-225','sv1-33'].map((id,i)=>({...core.makePokemonSlot(id,1,who+'b'+i),benchSlot:i}));}return {s,us:s.sides[side],them:s.sides[foe]};}
@@ -33,7 +33,7 @@ for(const side of ['player','opponent']){
 test('151 stage 2 exact shared effects and explicit remaining dependencies',()=>{
  const by=n=>sv.cardById('sv3pt5-'+n);
  for(const n of [3,4,8,10,18,22,25,35,38,52,55,56,59,82,88,89,97,98,120,123,125,126,127,129,130,134,135,136,144,149,155,159,165])assert.ok(by(n).battleEnabled,`${n}: ${by(n).support.reasons}`);
- for(const n of [65])assert.equal(by(n).battleEnabled,false,by(n).name);
+ for(const n of [65,188,201])assert.ok(by(n).battleEnabled,by(n).name);
  for(const c of sv.CARDS.filter(c=>c.battleEnabled)){
    for(const a of c.abilities||[])assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}`);
    if(c.kind==='trainer')assert.ok(fx.supportsEffect(c.effect),c.id);
@@ -390,7 +390,7 @@ for(const side of ['player','opponent']){
 }
 
 // Stage 13: next-turn coin restriction, both shared and legacy coin routes.
-test('151 stage 13 enables both Psyduck prints',()=>{for(const n of [54,175])assert.ok(sv.cardById('sv3pt5-'+n).battleEnabled);assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length,204);});
+test('151 stage 13 enables both Psyduck prints',()=>{for(const n of [54,175])assert.ok(sv.cardById('sv3pt5-'+n).battleEnabled);assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length,207);});
 for(const side of ['player','opponent']){
  const foe=side==='player'?'opponent':'player';
  test(side+' Overthink marks next opposing turn, not the other player; shared flips advance RNG and override guaranteed heads',()=>{
@@ -405,7 +405,7 @@ for(const side of ['player','opponent']){
 }
 
 // Stage 14: Sand Screen only protects opposing Trainer recovery to deck.
-test('151 Sandshrew enabled; only Alakazam ex remains gated',()=>{assert.ok(sv.cardById('sv3pt5-27').battleEnabled);assert.deepEqual(sv.coverage().disabled,['sv3pt5-65','sv3pt5-188','sv3pt5-201']);});
+test('151 Sandshrew enabled; all 151 prints enabled',()=>{assert.ok(sv.cardById('sv3pt5-27').battleEnabled);assert.deepEqual(sv.coverage().disabled,[]);});
 for(const side of ['player','opponent']){
  test(side+' Sand Screen blocks Pal Pad on Active and Bench, respects suppression',()=>{
   for(const mode of ['active','bench','suppressed','absent']){
@@ -438,3 +438,22 @@ for(const side of ['player','opponent']){
   }
  });
 }
+
+for(const side of ['player','opponent']){
+ test(side+' Dimensional Hand uses actual Bench attacker, preserves Active and ignores Active paralysis',()=>{
+  const {s,us,them}=scene(side,'sv3pt5-1'),active=us.active;active.conditions={paralysis:true};active.energy={Psychic:4};them.active=core.makePokemonSlot('sv3pt5-6',1,'def');const target=them.active;
+  const kaz={...core.makePokemonSlot('sv3pt5-188',1,'kaz'),benchSlot:0};us.bench[0]=kaz;kaz.energy={Psychic:1};const get=()=>core.legalActions(s,side).filter(a=>a.type==='attack'&&a.sourceUid==='kaz');assert.equal(get().length,0);kaz.energy.Psychic=2;assert.equal(get().length,1);assert.equal(get()[0].attackIndex,1);
+  assert.throws(()=>core.applyAction(s,side,{...get()[0],sourceUid:'missing'}),/Illegal/);core.applyAction(s,side,get()[0]);assert.equal(us.active,active);assert.equal(us.bench[0],kaz);assert.equal(target.damage,120);assert.equal(us.lastAttackUid,'kaz');assert.equal(us.lastAttackCardId,'sv3pt5-188');assert.equal(active.damage,0);assert.notEqual(s.activeSide,side);
+ });
+ test(side+' Dimensional Hand uses source Weakness and routes reactive damage to Bench',()=>{
+  const {s,us,them}=scene(side,'sv3pt5-1'),active=us.active;us.active.energy={};const kaz={...core.makePokemonSlot('sv3pt5-201',1,'kaz'),benchSlot:0};us.bench[0]=kaz;kaz.energy={Psychic:2};them.active=core.makePokemonSlot('sv3pt5-6',1,'def');them.active.tool={uid:'helmet',cardId:'bw3-94'};them.active.weaknessOverride='Psychic';const target=them.active;const a=core.legalActions(s,side).find(a=>a.sourceUid==='kaz'&&a.type==='attack');core.applyAction(s,side,a);assert.equal(target.damage,240);assert.equal(kaz.damage,20);assert.equal(active.damage,0);
+ });
+ test(side+' Dimensional Hand source identity, per-Pokemon locks, Geeta restriction',()=>{
+  const {s,us}=scene(side,'sv3pt5-65');for(let i=0;i<2;i++){us.bench[i]={...core.makePokemonSlot('sv3pt5-65',1,'kaz'+i),benchSlot:i,energy:{Psychic:2}};}
+  const get=()=>core.legalActions(s,side).filter(a=>a.type==='attack'&&a.attackIndex===1);assert.equal(get().length,3);us.bench[0].locks=[{action:'attack',expiresTurn:s.turnNumber}];assert.equal(get().length,2);us.sv3GeetaTurn=s.turnNumber;assert.equal(get().length,0);
+ });
+}
+
+test('CPU can choose a legal Bench attack without retreating',()=>{
+ const ai=require('../app/src/main/assets/tcgp-battle-ai'),{s,us,them}=scene('opponent','sv3pt5-1');us.active.energy={};us.active.conditions={paralysis:true};us.hand=[];us.energyUsed=true;us.handEnergyUsed=true;us.bench=[{...core.makePokemonSlot('sv3pt5-65',1,'kaz'),benchSlot:0,energy:{Psychic:2}}];them.active=core.makePokemonSlot('sv3pt5-6',1,'def');const chosen=ai.chooseAction(s,'opponent','Beginner',30);assert.equal(chosen.type,'attack');assert.equal(chosen.sourceUid,'kaz');
+});

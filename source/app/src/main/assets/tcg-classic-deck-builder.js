@@ -490,7 +490,6 @@ function rescueBW10Deck(rows,options={}){
 function buildDeck(rows,options={}){
  const rarityFocus=RARITY_FOCUS.some(r=>r.id===options.rarityFocus)?options.rarityFocus:'any',basicOnly=options.basicOnly===true,theme=synergy.THEMES.some(t=>t.id===options.theme)?options.theme:'any';
  const style=options.style==='random'?'random':'competitive',owned=ownedMap(rows),allowedSets=(options.sets||SET_IDS).filter(s=>SET_IDS.includes(s)),scope=allowedSets.length?allowedSets:SET_IDS,pool=classic.CARDS.filter(c=>allowedInSetPool(c,scope)&&c.battleEnabled&&c.deckEligible!==false&&c.id!=='swsh4-66'&&Number(owned.get(c.id)||0)>0),pokemonPool=pool.filter(c=>c.kind==='pokemon'),evolutionPool=pool.filter(c=>c.kind==='pokemon'||isEvolutionFossil(c));
- if(scope.length===1&&scope[0]==='sv3pt5')return fail('151 is in its initial implementation stage. Select another set alongside it until Trainer and Fossil support is complete.');
  if(scope.length===1&&scope[0]==='swshp')return fail('SWSH Black Star Promos is partially implemented. Select another set alongside it (e.g. Crown Zenith Galarian Gallery).');
  indexEvolutionPool(evolutionPool);
  if([...pool].reduce((sum,c)=>sum+Math.min(c.setId==='pl4'&&(/^AR[1-9]$/.test(String(c.number))||['94','95','96'].includes(String(c.number)))?30:4,owned.get(c.id)||0),0)<30)return fail('Not enough owned battle-ready Classic card copies to build a 30-card deck.');

@@ -4,7 +4,7 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(core,data,effects){
   'use strict';
   const DIFFICULTIES=['Beginner','Intermediate','Advanced','Expert'];
-  const ACTION_KEYS=['type','handIndex','cardId','target','benchIndex','attackIndex','attackCardId','abilityIndex','effectTarget','effectBenchIndex','choiceTarget','choiceBenchIndex','choiceHandIndex','choiceDiscardIndex','choiceDeckIndex','choiceCardId','choiceAttackIndex','choiceToolIndex','choicePrizeIndex','choiceOption','choiceSkip','effectEnergyType','effectSpecialEnergyUid','effectSelection','copiedEffectSelection'];
+  const ACTION_KEYS=['type','handIndex','cardId','target','benchIndex','attackIndex','attackCardId','sourceUid','abilityIndex','effectTarget','effectBenchIndex','choiceTarget','choiceBenchIndex','choiceHandIndex','choiceDiscardIndex','choiceDeckIndex','choiceCardId','choiceAttackIndex','choiceToolIndex','choicePrizeIndex','choiceOption','choiceSkip','effectEnergyType','effectSpecialEnergyUid','effectSelection','copiedEffectSelection'];
   const sameAction=(a,b)=>!!a&&!!b&&ACTION_KEYS.every(k=>a[k]===b[k]||(a[k]==null&&b[k]==null));
   const foeOf=side=>side==='player'?'opponent':'player';
   const clone=value=>JSON.parse(JSON.stringify(value));
@@ -293,6 +293,7 @@
     if(action.type==='attach'||action.type==='attachSpecial')return 400+attachScore(action,state,side);
     if(action.type==='attack'){
       const attack=data.cardById(action.attackCardId||state.sides[side].active.cardId)?.attacks[action.attackIndex];
+      if(action.sourceUid){const source=slots(state.sides[side]).find(p=>p.uid===action.sourceUid),target=state.sides[foeOf(side)].active;const hit=source&&target&&!effects.attackIsPrevented(state,foeOf(side),target,source,data.cardById)?Math.max(0,matchupDamage(state,side,source,attack,action.attackIndex,action.attackCardId)-effects.modifierAmount(state,foeOf(side),target,'damageReduction',data.cardById)):0;return 200+hit+(target&&hit>=core.maxHp(state,foeOf(side),target)-Number(target.damage||0)?100:0);}
       if(attack?.effect?.source==='dragonDiscard'){
         const copied=data.cardById(action.choiceCardId)?.attacks?.[action.choiceAttackIndex];
         return copied?200+Number(copied.damage||0):1;

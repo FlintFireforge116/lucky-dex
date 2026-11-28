@@ -32,7 +32,6 @@
    const first=pick(seed,candidates.length);
    const allowed=[...new Set((sets||SETS).filter(id=>SETS.includes(id)))];
    if(!allowed.length)return {ok:false,error:'Select at least one set for the CPU card pool.'};
-   if(allowed.length===1&&allowed[0]==='sv3pt5')return {ok:false,error:'151 is in its initial implementation stage. Select another set alongside it until Trainer and Fossil support is complete.'};
    if(allowed.length===1&&allowed[0]==='swshp')return {ok:false,error:'SWSH Black Star Promos is partially implemented. Select another set alongside it (e.g. Crown Zenith Galarian Gallery).'};
    // One unlucky seed must not make an otherwise buildable selected-type
    // opponent unavailable. Retry with distinct seeded candidate mixes while

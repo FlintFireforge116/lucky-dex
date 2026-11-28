@@ -207,7 +207,7 @@
     if(action.type==='retreat')return`RETREAT → ${slotName(state,side,'bench',action.benchIndex)}`;
     if(action.type==='attack'){
       const active=state?.sides?.[side]?.active,sourceCard=data.cardById(action.attackCardId||active?.cardId),attack=sourceCard?.attacks?.[action.attackIndex];
-      const preview=core.attackDamagePreview?.(state,side,action.attackIndex,action.attackCardId);
+      const preview=core.attackDamagePreview?.(state,side,action.attackIndex,action.attackCardId,true,action.sourceUid);
       if(attack?.effect?.rule==='founja:flightPath'&&action.choiceLabel)return `FLIGHT PATH · ${action.choiceLabel}`;
       if(attack?.effect?.rule==='expedition:lightningStrike'&&action.choiceLabel)return `LIGHTNING STRIKE · ${action.choiceLabel}`;
       // EX Hidden Legends Lanturn: the printed 50 damage is replaced by 90
@@ -396,11 +396,11 @@
   function benchDamagePresentationEntry(entry){return {type:'attack',side:entry?.side,targetSide:entry?.targetSide||((entry?.side==='player')?'opponent':'player'),cardId:entry?.sourceCardId,attack:String(entry?.attack||'Attack'),damage:Math.max(0,Number(entry?.amount||0)),target:'bench',benchIndex:Number(entry?.benchIndex||0),secondary:true};}
   function attackTargetAnchor(anchors,entry){const foe=entry?.targetSide||(entry?.side==='player'?'opponent':'player'),zone=entry?.target==='bench'?'bench':'active',index=zone==='bench'?Number(entry?.benchIndex||0):0;return anchors?.slots?.[boardSlotKey(foe,zone,index)]||null;}
   function spawnAttackFx(stage,layerRect,anchors,entry){
-    const source=anchors?.slots?.[boardSlotKey(entry.side,'active',0)]?.rect,targetInfo=attackTargetAnchor(anchors,entry),target=targetInfo?.rect,from=localBox(source,layerRect),to=localBox(target,layerRect);if(!from||!to)return;
+    const source=anchors?.slots?.[boardSlotKey(entry.side,entry.sourceBenchIndex==null?'active':'bench',entry.sourceBenchIndex??0)]?.rect,targetInfo=attackTargetAnchor(anchors,entry),target=targetInfo?.rect,from=localBox(source,layerRect),to=localBox(target,layerRect);if(!from||!to)return;
     const meta=attackPresentationMeta(entry),dx=to.cx-from.cx,dy=to.cy-from.cy,distance=Math.max(18,Math.hypot(dx,dy)),angle=Math.atan2(dy,dx)*180/Math.PI;
     const fx=appendPresentationNode(stage,`tcgp-present-attack type-${meta.type} intensity-${meta.intensity}${entry?.secondary?' secondary':''}`);fx.style.left=from.cx+'px';fx.style.top=from.cy+'px';fx.style.width=distance+'px';fx.style.setProperty('--tcgp-attack-angle',angle+'deg');
     const damage=appendPresentationNode(stage,`tcgp-present-damage intensity-${meta.intensity}${entry?.secondary?' secondary':''}`);damage.textContent=meta.damage>0?`−${meta.damage}`:(entry?.displayOutcome||(entry?.damageReason?'BLOCKED':'EFFECT'));damage.style.left=to.cx+'px';damage.style.top=to.cy+'px';
-    const content=el('tcgpBattleContent'),attackerNode=content?.querySelector(boardSlotSelector(entry.side,'active',0)),targetNode=content?.querySelector(boardSlotSelector(targetInfo?.side||'',targetInfo?.zone||'active',targetInfo?.index||0));if(!entry?.secondary)attackerNode?.classList.add('tcgp-present-lunge');targetNode?.classList.add('tcgp-present-hit');
+    const content=el('tcgpBattleContent'),attackerNode=content?.querySelector(boardSlotSelector(entry.side,entry.sourceBenchIndex==null?'active':'bench',entry.sourceBenchIndex??0)),targetNode=content?.querySelector(boardSlotSelector(targetInfo?.side||'',targetInfo?.zone||'active',targetInfo?.index||0));if(!entry?.secondary)attackerNode?.classList.add('tcgp-present-lunge');targetNode?.classList.add('tcgp-present-hit');
     const remove=()=>{attackerNode?.classList.remove('tcgp-present-lunge');targetNode?.classList.remove('tcgp-present-hit');};battlePresentationTimers.push(setTimeout(remove,680));
     if(meta.intensity==='big'||meta.intensity==='finisher')content?.querySelector('.tcgp-live-arena')?.classList.add('tcgp-present-shake');
   }
@@ -860,7 +860,7 @@
     }
     if(currentBattle?.phase!=='battle')return'';
     if(zone==='active'){
-      const attacks=actionIndicesFor(action=>action.type==='attack');
+      const attacks=actionIndicesFor(action=>action.type==='attack'&&!action.sourceUid);
       const attackGroups=new Map();
       attacks.forEach(actionIndex=>{const action=battleActionCache[actionIndex],key=`${action.attackCardId||action.cardId}:${action.attackIndex}`;if(!attackGroups.has(key))attackGroups.set(key,[]);attackGroups.get(key).push(actionIndex);});
       const activeCardId=currentBattle?.sides?.player?.active?.cardId;
@@ -877,6 +877,12 @@
       const abilities=actionIndicesFor(action=>action.type==='ability'&&action.target==='active');
       if(abilities.length){const first=battleActionCache[abilities[0]],card=data.cardById(currentBattle?.sides?.player?.active?.cardId),ability=cardAbilities(card)[Number(first?.abilityIndex||0)];parts.push(contextActionButton(abilities,abilities.length>1?'ABILITIES':first?.choiceLabel||ability?.name||'ABILITY','ability'));}
     }else if(zone==='bench'){
+      const slot=core.benchSlotAt(currentBattle.sides.player,index);
+      for(const opt of (core.benchAttackOptions?.(currentBattle,'player')||[]).filter(o=>o.sourceUid===slot?.uid)){
+        const indices=actionIndicesFor(a=>a.type==='attack'&&a.sourceUid===opt.sourceUid&&a.attackIndex===opt.attackIndex),availability=core.attackAvailability(currentBattle,'player',opt.attackIndex,opt.cardId,opt.sourceUid),preview=core.attackDamagePreview(currentBattle,'player',opt.attackIndex,opt.cardId,true,opt.sourceUid);
+        const attrs=indices.length?`data-tcgp-action="battle-action" data-action-index="${indices[0]}"`:`data-tcgp-action="explain-unavailable" data-reason="${esc(availability.reason)}" aria-disabled="true"`;
+        parts.push(`<button type="button" class="tcgp-live-context-action attack" ${attrs}><b>${esc(opt.attack.name)}</b><small>BENCH ATTACK · ${esc(indices.length?core.energyCostLabel(availability.cost):availability.reason)}</small><em class="tcgp-live-attack-description">${esc(attackDescription(opt.attack))}</em><strong>${esc(preview.text)} DMG</strong></button>`);
+      }
       const abilities=actionIndicesFor(action=>action.type==='ability'&&action.target==='bench'&&Number(action.benchIndex)===Number(index||0));
       if(abilities.length){const slot=core?.benchSlotAt?core.benchSlotAt(currentBattle?.sides?.player,index):currentBattle?.sides?.player?.bench?.[Number(index||0)],first=battleActionCache[abilities[0]],card=data.cardById(slot?.cardId),ability=cardAbilities(card)[Number(first?.abilityIndex||0)];parts.push(contextActionButton(abilities,abilities.length>1?'ABILITIES':first?.choiceLabel||ability?.name||'ABILITY','ability'));}
       if(currentBattle?.format==='classic'){
