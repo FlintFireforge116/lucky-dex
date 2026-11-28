@@ -31302,7 +31302,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     // Spiritomb is a modern Ability lock on Basic Pokemon V on either side.
     // Its non-V source cannot be suppressed by this same rule.
     if(zone==='play'&&state?.format==='classic'&&slot&&cardById(slot.cardId)?.stage==='Basic'&&cardById(slot.cardId)?.pokemonV&&
-       ['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>p.cardId==='sv2-89'&&!abilitiesSuppressed(state,w,p,cardById))))return true;
+       ['player','opponent'].some(w=>pokemonOn(state.sides[w]).some(p=>["sv2-89","sv4pt5-158"].includes(p.cardId)&&!abilitiesSuppressed(state,w,p,cardById))))return true;
     // Cursed Land suppresses damaged opposing modern Abilities except lowercase ex.
     if(zone==='play'&&state?.format==='classic'&&slot&&Number(slot.damage||0)>0&&!/ ex$/.test(cardById(slot.cardId)?.name||'')){
       const foe=side==='player'?'opponent':'player',source=state.sides[foe]?.active;
@@ -31730,7 +31730,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     if(state?.format==='classic'&&attacker&&cardById(slot?.cardId)?.tera&&state.sides[side]?.bench?.includes(slot))return {type:'preventDamage',reason:'Tera',effects:false};
     const attackingSide=side==='player'?'opponent':'player';
     if(state?.format==='classic'&&attacker&&pokemonOn(state.sides[attackingSide]).includes(attacker)&&['sv3pt5-122','sv3pt5-179'].includes(slot?.cardId)&&!abilitiesSuppressed(state,side,slot,cardById)&&state.sides[attackingSide]?.active&&sm8EnergyUnits(state,side,slot,cardById)===sm8EnergyUnits(state,attackingSide,state.sides[attackingSide].active,cardById))return {type:'preventDamage',reason:'Mimic Barrier',effects:false};
-    if(state?.format==='classic'&&attacker&&pokemonOn(state.sides[attackingSide]).includes(attacker)&&state.sides[side]?.bench?.includes(slot)&&state.sides[side].active?.cardId==='sv3-70'&&!abilitiesSuppressed(state,side,state.sides[side].active,cardById))return {type:'preventDamage',reason:'Adverse Weather',effects:false};
+    if(state?.format==='classic'&&attacker&&pokemonOn(state.sides[attackingSide]).includes(attacker)&&state.sides[side]?.bench?.includes(slot)&&["sv3-70","sv4pt5-139"].includes(state.sides[side].active?.cardId)&&!abilitiesSuppressed(state,side,state.sides[side].active,cardById))return {type:'preventDamage',reason:'Adverse Weather',effects:false};
     if(state?.format==='classic'&&slot&&attacker&&pokemonOn(state.sides[attackingSide]).includes(attacker)&&activeToolsOf(state,slot,cardById).some(r=>r.cardId==='swsh11-165')&&maxHp(state,attackingSide,attacker,cardById)-Number(attacker.damage||0)<=40)return {type:'preventDamage',reason:'Panic Mask',effects:false};
     if(state?.format==='classic'&&slot&&attacker&&pokemonOn(state.sides[side==='player'?'opponent':'player']).includes(attacker)&&cardById(attacker.cardId)?.pokemonV&&cardById(slot.cardId)?.stage==='Basic'&&(Number(slot.energy?.Metal||0)>0||(slot.specialEnergy||[]).some(r=>attachedSpecialProvidesType(r,'Metal',slot,cardById,state)))&&pokemonOn(state.sides[side]).some(p=>['swsh11-134','swsh12pt5gg-GG21'].includes(p.cardId)&&!abilitiesSuppressed(state,side,p,cardById)))return {type:'preventDamage',reason:'Metal Lodging',effects:false};
     if(state?.format==='classic'&&cardById(attacker?.cardId)?.pokemonVMAX&&pokemonOn(state.sides[side==='player'?'opponent':'player']).includes(attacker)&&cardById(slot?.cardId)?.attacks?.some(a=>a.name==="Let's All Rollout")&&pokemonOn(state.sides[side]).some(p=>p.cardId==='swsh8-203'&&!abilitiesSuppressed(state,side,p,cardById)))return {type:'preventDamage',reason:'Expert in Roundness',effects:false};
@@ -31919,7 +31919,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       if(slot.cardId==='ex6-3'&&!abilitiesSuppressed(state,side,slot,cardById)&&attackerCard?.pokemonEx)return {type:'preventDamage',reason:'EX6 Dewgong Safeguard',effects:true};
       if(slot.cardId==='ex5-22'&&!abilitiesSuppressed(state,side,slot,cardById)&&attackerCard?.pokemonEx)return {type:'preventDamage',reason:'EX Hidden Legends Safeguard',effects:true};
       if(slot.cardId==='ex5-46'&&bench.includes(slot)&&!abilitiesSuppressed(state,side,slot,cardById))return {type:'preventDamage',reason:'EX Hidden Legends Power Diffusion',effects:true};
-      if(slot.cardId==='sv1-99'&&!abilitiesSuppressed(state,side,slot,cardById)&&attackerCard?.types?.includes('Fire'))return {type:'preventDamage',reason:'Well-Baked Body',effects:true};
+      if(["sv1-99","sv4pt5-39","sv4pt5-161"].includes(slot.cardId)&&!abilitiesSuppressed(state,side,slot,cardById)&&attackerCard?.types?.includes('Fire'))return {type:'preventDamage',reason:'Well-Baked Body',effects:true};
       if(bench.includes(slot)&&(activeStadium(state,slot,cardById)?.cardId==='SNAPFOUNJA-083'||pokemonOn(state.sides[side]).some(p=>p.cardId==='SNAPFOUNJA-001'&&!abilitiesSuppressed(state,side,p,cardById))))return {type:'preventDamage',reason:'Founja Bench protection',effects:true};
       if(slot.founjaSubmergeUntil>=state.turnNumber&&attackerCard?.stage!=='Basic')return {type:'preventDamage',reason:'Submerge',effects:true};
       const nesting=pokemonOn(state.sides[side]).find(p=>p.cardId==='SNAPFOUNJA-069'&&!abilitiesSuppressed(state,side,p,cardById));
@@ -32003,7 +32003,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       if(slot.cardId==='ex6-49'&&!abilitiesSuppressed(state,side,slot,cardById))return true;
       if(slot.cardId==='ex6-3'&&!abilitiesSuppressed(state,side,slot,cardById)&&cardById(attacker?.cardId)?.pokemonEx)return true;
       if(slot.cardId==='ex5-97'&&!abilitiesSuppressed(state,side,slot,cardById))return true;
-            if(slot.cardId==='sv1-99'&&!abilitiesSuppressed(state,side,slot,cardById)&&cardById(attacker?.cardId)?.types?.includes('Fire'))return true;
+            if(["sv1-99","sv4pt5-39","sv4pt5-161"].includes(slot.cardId)&&!abilitiesSuppressed(state,side,slot,cardById)&&cardById(attacker?.cardId)?.types?.includes('Fire'))return true;
       if((state.sides[side]?.bench||[]).includes(slot)&&(activeStadium(state,slot,cardById)?.cardId==='SNAPFOUNJA-083'||pokemonOn(state.sides[side]).some(p=>p.cardId==='SNAPFOUNJA-001'&&!abilitiesSuppressed(state,side,p,cardById))))return true;
       if(slot.founjaSubmergeUntil>=state.turnNumber&&cardById(attacker?.cardId)?.stage!=='Basic')return true;
       if(slot.cardId==='SNAPFOUNJA-030'&&!abilitiesSuppressed(state,side,slot,cardById))return true;
@@ -32579,7 +32579,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
         if(!abilitiesSuppressed(state,owner,slot,cardById))return true;
       }
       if(['ex6-44','ex6-48'].includes(slot.cardId)){const owner=pokemonOn(state.sides.player).includes(slot)?'player':'opponent';if(!abilitiesSuppressed(state,owner,slot,cardById))return true;}
-      if(slot.cardId==='sv1-99'&&status==='burn'){const owner=pokemonOn(state.sides.player).includes(slot)?'player':'opponent';if(!abilitiesSuppressed(state,owner,slot,cardById))return true;}
+      if(["sv1-99","sv4pt5-39","sv4pt5-161"].includes(slot.cardId)&&status==='burn'){const owner=pokemonOn(state.sides.player).includes(slot)?'player':'opponent';if(!abilitiesSuppressed(state,owner,slot,cardById))return true;}
       const owner=pokemonOn(state.sides.player).includes(slot)?'player':pokemonOn(state.sides.opponent).includes(slot)?'opponent':null;
       if(owner){const board=state.sides[owner],flora=pokemonOn(board).some(s=>s.cardId==='SNAPFLORIO-048'&&!abilitiesSuppressed(state,owner,s,cardById));
         if(flora&&(Number(slot.energy?.Lightning||0)>0||activeSpecialEnergy(state,slot,cardById).some(r=>Number((r.provides||cardById(r.cardId)?.effect?.provides||{}).Lightning||0)>0)))return true;

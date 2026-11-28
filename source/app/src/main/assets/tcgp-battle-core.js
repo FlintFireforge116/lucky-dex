@@ -1580,7 +1580,7 @@
       const empty=emptyBenchSlots(s);
       s.hand.forEach((ref,handIndex)=>{
         const card = data.cardById(ref.cardId);
-        const swelling=state.format==='classic'&&card?.id==='sv2-71'&&s.prizes.length>foe.prizes.length&&!effects.isActionLocked(state,side,'Ability',data.cardById)&&!effects.abilitiesSuppressed(state,side,ref,data.cardById,'hand');
+        const swelling=state.format==='classic'&&["sv2-71","sv4pt5-137"].includes(card?.id)&&s.prizes.length>foe.prizes.length&&!effects.isActionLocked(state,side,'Ability',data.cardById)&&!effects.abilitiesSuppressed(state,side,ref,data.cardById,'hand');
         const elusive=state.format==='classic'&&card?.id==='swsh4-3'&&s.hand.length===1&&!effects.isActionLocked(state,side,'Ability',data.cardById)&&!effects.abilitiesSuppressed(state,side,ref,data.cardById,'hand');
         if (card && card.kind === 'pokemon' && (card.stage === 'Basic'||elusive||swelling) && card.battleEnabled&&eternalZoneCanPlace(state,side,card.id)){
           empty.forEach(benchIndex=>actions.push({type:'bench',handIndex,cardId:card.id,benchIndex}));
@@ -3018,7 +3018,7 @@
           if(receiver&&types.length){seen.push(receiver.uid);beginEffectChoice(state,side,slot,{kind:'option',side:'self',options:types.map(t=>'Move '+t+' Energy to Lanturn'),optional:true,special:'sm7Grounding',sourceUid:slot.uid,receiverUid:receiver.uid,types,koResume:resume||null,koCause:cause||null});return true;}
         }
         if(state.format==='classic'&&eventSource?.attack&&eventSource.side===foeSide&&Number(eventSource.turn)===Number(state.turnNumber)&&Number(eventSource.damage)>0&&eventSource.damageKo!==false){
-          const seen=slot.sv151GroundingSeen||(slot.sv151GroundingSeen=[]),receiver=pokemonOn(s).find(p=>p!==slot&&p.cardId==='sv3pt5-26'&&Number(p.damage||0)<maxHp(state,side,p)&&!seen.includes(p.uid)&&!effects.abilitiesSuppressed(state,side,p,data.cardById)&&!p.gymEnergyLock);
+          const seen=slot.sv151GroundingSeen||(slot.sv151GroundingSeen=[]),receiver=pokemonOn(s).find(p=>p!==slot&&["sv3pt5-26","sv4pt5-19","sv4pt5-132"].includes(p.cardId)&&Number(p.damage||0)<maxHp(state,side,p)&&!seen.includes(p.uid)&&!effects.abilitiesSuppressed(state,side,p,data.cardById)&&!p.gymEnergyLock);
           const units=[...(Number(slot.energy?.Lightning)>0?[{type:'Lightning',label:'Basic Lightning Energy'}]:[]),...(slot.specialEnergy||[]).filter(x=>effects.attachedSpecialProvidesType(x,'Lightning',slot,data.cardById,state)).map(x=>({uid:x.uid,label:data.cardById(x.cardId)?.name||'Special Energy'}))];
           if(receiver&&units.length){seen.push(receiver.uid);beginEffectChoice(state,side,slot,{kind:'option',side:'self',options:units.map(x=>'Move '+x.label+' to Raichu'),optional:true,special:'sv151ElectricalGrounding',sourceUid:slot.uid,receiverUid:receiver.uid,units,koResume:resume||null,koCause:cause||null});return true;}
         }
@@ -3265,7 +3265,7 @@
       state.xy6SkyFieldTrim=true;
       state.log.push({type:'xy6SkyFieldLeft',side:state.xy6SkyFieldOwner||'player'});
     }
-    const dust=who=>{const enemy=who==='player'?'opponent':'player',p=state.sides[enemy].active;return ['sv3-123','sv3-213'].includes(p?.cardId)&&!effects.abilitiesSuppressed(state,enemy,p,data.cardById);};
+    const dust=who=>{const enemy=who==='player'?'opponent':'player',p=state.sides[enemy].active;return ['sv3-123','sv3-213','sv4pt5-218'].includes(p?.cardId)&&!effects.abilitiesSuppressed(state,enemy,p,data.cardById);};
     const roadblock=who=>{const enemy=who==='player'?'opponent':'player';return pokemonOn(state.sides[enemy]).some(p=>['sm2-66','sma-SV20'].includes(p.cardId)&&!effects.abilitiesSuppressed(state,enemy,p,data.cardById));};
     for(const who of ['player','opponent']){
       const s=state.sides[who];
@@ -3941,7 +3941,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       const [ref] = s.hand.splice(matched.handIndex,1);
       const placed=placeOnBench(s,makePokemonSlot(ref.cardId,s.turnCount,ref.uid),matched.benchIndex);
       state.log.push({type:'bench',side,cardId:ref.cardId,benchIndex:matched.benchIndex});
-      if(state.format==='classic'&&ref.cardId==='sv2-71')state.log.push({type:'ability',side,cardId:ref.cardId,ability:'Swelling Flash',fromHand:true});
+      if(state.format==='classic'&&["sv2-71","sv4pt5-137"].includes(ref.cardId))state.log.push({type:'ability',side,cardId:ref.cardId,ability:'Swelling Flash',fromHand:true});
       if(state.format==='classic'&&ref.cardId==='swsh4-3'){
         state.log.push({type:'ability',side,cardId:ref.cardId,ability:'Elusive Master',fromHand:true});
         for(let i=0;i<3;i++)drawCard(s);
@@ -5031,7 +5031,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       if(sv4Moved&&(sv4Moved.effect.rule!=='sm11BurningRoad'||board.bench.some(p=>Number(p.energy?.Fire||0)>0||(p.specialEnergy||[]).some(r=>effects.attachedSpecialProvidesType(r,'Fire',p,data.cardById,state))))){
         incoming.sv4MovedUsedTurn=turnOfAction;effects.applyEffect(sv4Moved.effect,{...effectContext(state,owner,{},incoming),isAbility:true});if(state.phase==='effectChoice'){state.pendingChoice.resume='ability';state.pendingChoice.isAbility=true;}
       }
-      if(incoming&&before[owner].uid!==incoming.uid&&before[owner].bench.has(incoming.uid)&&incoming.cardId==='sv2-134'&&incoming.sv2AssaultTurn!==turnOfAction&&!effects.abilitiesSuppressed(state,owner,incoming,data.cardById)&&state.sides[owner==='player'?'opponent':'player'].bench.some(p=>data.cardById(p.cardId)?.stage==='Basic')){
+      if(incoming&&before[owner].uid!==incoming.uid&&before[owner].bench.has(incoming.uid)&&["sv2-134","sv4pt5-183"].includes(incoming.cardId)&&incoming.sv2AssaultTurn!==turnOfAction&&!effects.abilitiesSuppressed(state,owner,incoming,data.cardById)&&state.sides[owner==='player'?'opponent':'player'].bench.some(p=>data.cardById(p.cardId)?.stage==='Basic')){
         incoming.sv2AssaultTurn=turnOfAction;effects.applyEffect({type:'sm7Rule',rule:'sv2Assault'},{...effectContext(state,owner,{},incoming),isAbility:true});if(state.phase==='effectChoice'){state.pendingChoice.resume='ability';state.pendingChoice.isAbility=true;}
       }
       if(incoming&&before[owner].uid!==incoming.uid&&before[owner].bench.has(incoming.uid)&&['swsh10-134','swsh10-180'].includes(incoming.cardId)&&incoming.swsh10FrontierTurn!==turnOfAction&&!effects.abilitiesSuppressed(state,owner,incoming,data.cardById)&&board.bench.some(p=>Object.values(p.energy||{}).some(n=>Number(n)>0)||(p.specialEnergy||[]).length)){
