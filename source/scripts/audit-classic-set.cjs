@@ -296,6 +296,8 @@ function runSmokes(cards,{data,core,opponents}){
       if(card.name==='Superior Energy Retrieval'){own.hand.push({cardId:'sv2-1',uid:'audit-superior-pay1'},{cardId:'sv2-4',uid:'audit-superior-pay2'});own.discard.push({cardId:'base1-102',uid:'audit-superior-water'});}
     }
     if(card.setId==='sv4'&&card.name==='Counter Catcher'){const foe=s.sides[side==='player'?'opponent':'player'];foe.prizes=foe.prizes.slice(0,Math.max(0,s.sides[side].prizes.length-1));}
+    if(card.setId==='sv4'&&card.name==='Earthen Vessel'){const own=s.sides[side];own.hand.push({cardId:'sv4-1',uid:'audit-vessel-pay'});own.deck.unshift({cardId:'base1-98',uid:'audit-vessel-energy'});}
+    if(card.id==='sv4-74'&&ix===1)s.sides[side].active.energy={Psychic:3};
     // Erika requires an opposing hand card; supply a real eligible Basic for all artwork variants.
     if(card.setId==='sv3pt5'&&card.effect?.rule==='sv151Erika')s.sides[side==='player'?'opponent':'player'].hand.push({cardId:'sv3pt5-1',uid:'audit-erika-basic'});
     // Night Cyclone moves every attached unit; use a realistic paid attack fixture
