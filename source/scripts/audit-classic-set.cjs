@@ -310,7 +310,7 @@ function runSmokes(cards,{data,core,opponents}){
     if(card.id==='sv3-189'){const board=s.sides[side];board.lastKnockoutTurn=s.turnNumber-1;board.deck.unshift({cardId:'base1-98',uid:'audit-letter-energy'});}
     if(card.id==='sv3-136'&&ix===1)s.sides[side].active.energy={Darkness:2,Colorless:1,Fire:1};
     if(card.id==='sv2-73'&&ix===1){const own=s.sides[side];own.lastAttackUid=own.active.uid;own.lastAttackName='Stun Needle';own.lastAttackTurn=s.turnNumber-2;own.lastAttackCardId=card.id;}
-    if(card.setId==='sv1'&&card.kind==='trainer'){
+    if(['sv1','sv4pt5'].includes(card.setId)&&card.kind==='trainer'){
       const own=s.sides[side],enemy=s.sides[side==='player'?'opponent':'player'];
       if(card.name==='Picnic Basket'){own.active.damage=30;enemy.active.damage=20;}
       if(card.name==='Rare Candy'){own.bench[0].cardId='sv1-13';own.bench[0].stack=['sv1-13'];own.hand.push({cardId:'sv1-15',uid:'sv-candy-stage2'});}
