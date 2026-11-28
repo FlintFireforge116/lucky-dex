@@ -31429,7 +31429,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
   function attackCostOverride(state,side,slot,attack,cardById){
     if(state?.format==='classic'&&slot&&upgradeAbilities(slot,cardById).some(a=>a.name==='Monkey Trio'&&a.type==='passive')&&!abilitiesSuppressed(state,side,slot,cardById)&&['Simisage','Simisear','Simipour'].every(name=>pokemonOn(state.sides[side]).some(p=>cardById(p.cardId)?.name===name)))return (Array.isArray(attack?.cost)?attack.cost.join(''):String(attack?.cost||'')).replace(/C/g,'');
     if(state?.format==='classic'&&['sv4-158','sv4-216'].includes(slot?.cardId)&&attack?.name==='Baryon Beam'&&toolsOf(slot).some(t=>cardById(t.cardId)?.name==='Future Booster Energy Capsule'))return 'CCC';
-    if(state?.format==='classic'&&slot?.cardId==='sv2-56'&&attack?.name==='Slim Screw'&&!state.sides[side].hand.length)return 'W';
+    if(state?.format==='classic'&&['sv2-56','sv4pt5-125'].includes(slot?.cardId)&&attack?.name==='Slim Screw'&&!state.sides[side].hand.length)return 'W';
     if(state?.format==='classic'&&slot?.cardId==='swsh11-50'&&!abilitiesSuppressed(state,side,slot,cardById)&&(state.sides[side].lostZone||[]).length>=4)return '';
     if(state?.format==='classic'&&['swsh6-80','swsh6-173','swsh6-174'].includes(slot?.cardId)&&!abilitiesSuppressed(state,side,slot,cardById)){
       let count=pokemonOn(state.sides[side==='player'?'opponent':'player']).filter(p=>cardById(p.cardId)?.pokemonV).length;
