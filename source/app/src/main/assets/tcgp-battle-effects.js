@@ -31347,6 +31347,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
       const rule=scanEffect(ability.effect,type,ctx);if(rule)return rule;}return null;
   }
   function attackCostOverride(state,side,slot,attack,cardById){
+    if(state?.format==='classic'&&slot&&upgradeAbilities(slot,cardById).some(a=>a.name==='Monkey Trio'&&a.type==='passive')&&!abilitiesSuppressed(state,side,slot,cardById)&&['Simisage','Simisear','Simipour'].every(name=>pokemonOn(state.sides[side]).some(p=>cardById(p.cardId)?.name===name)))return (Array.isArray(attack?.cost)?attack.cost.join(''):String(attack?.cost||'')).replace(/C/g,'');
     if(state?.format==='classic'&&['sv4-158','sv4-216'].includes(slot?.cardId)&&attack?.name==='Baryon Beam'&&toolsOf(slot).some(t=>cardById(t.cardId)?.name==='Future Booster Energy Capsule'))return 'CCC';
     if(state?.format==='classic'&&slot?.cardId==='sv2-56'&&attack?.name==='Slim Screw'&&!state.sides[side].hand.length)return 'W';
     if(state?.format==='classic'&&slot?.cardId==='swsh11-50'&&!abilitiesSuppressed(state,side,slot,cardById)&&(state.sides[side].lostZone||[]).length>=4)return '';
@@ -31504,7 +31505,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     if(state.stadium){const st=cardById(activeStadium(state,slot,cardById)?.cardId);const find=e=>e&&(e.type==='healingBlock'?e:e.type==='sequence'?(e.effects.map(find).find(Boolean)||null):null);if(find(st?.effect))return true;}
     return false;
   }
-  function modifierAmount(state,side,slot,stat,cardById){
+  function modifierAmount(state,side,slot,stat,cardById,attacker=null){
     if(!slot)return 0;const values=[];
     if(state?.format==='classic'&&stat==='maxHp'&&slot.cardId==='swsh11-88'&&state.sides[side==='player'?'opponent':'player'].prizes.length<=3&&!abilitiesSuppressed(state,side,slot,cardById))values.push(150);
     if(state?.format==='classic'&&stat==='attackCost'&&['swsh11-118','swsh11-182','swsh12pt5gg-GG49'].includes(slot.cardId)&&!abilitiesSuppressed(state,side,slot,cardById))values.push(-pokemonOn(state.sides[side==='player'?'opponent':'player']).filter(p=>{const c=cardById(p.cardId);return c?.singleStrike||c?.rapidStrike||c?.fusionStrike;}).length);
@@ -31588,7 +31589,7 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
     if(state.stadium){const stadium=cardById(activeStadium(state,slot,cardById)?.cardId);passiveModifiers(stadium?.effect,state.sides[side].active,side,state,slot,stat,values,cardById);}
     if(state?.format==='classic'&&stat==='damageReduction'&&cardById(slot.cardId)?.types?.includes('Metal'))
       values.push(10*activeSpecialEnergy(state,slot,cardById).filter(r=>['hgss3-80','col1-87'].includes(r.cardId)).length);
-    for(const m of state.modifiers||[]){if(m.stat!==stat||(m.scope!=='both'&&m.ownerSide!==side)||(m.scope==='active'||m.scope==='opponentActive'?state.sides[side].active!==slot:m.scope==='both'||m.scope==='team'?false:m.targetUid!==slot.uid)||m.startsTurn!=null&&state.turnNumber<m.startsTurn||m.expiresTurn!=null&&state.turnNumber>m.expiresTurn)continue;const ss=state.sides[side];if(m.duration==='whileActive'&&ss.active?.uid!==m.sourceUid)continue;if(m.duration==='whileInPlay'&&!pokemonOn(ss).some(s=>s.uid===m.sourceUid))continue;const opposingActive=state.sides[side==='player'?'opponent':'player'].active;if(m.opponentFilter&&(!opposingActive||!matchesFilter(cardById(opposingActive.cardId),m.opponentFilter,opposingActive)))continue;if(matchesFilter(cardById(slot.cardId),m.filter,slot))values.push(m.amount);}
+    for(const m of state.modifiers||[]){if(m.stat!==stat||(m.scope!=='both'&&m.ownerSide!==side)||(m.scope==='active'||m.scope==='opponentActive'?state.sides[side].active!==slot:m.scope==='both'||m.scope==='team'?false:m.targetUid!==slot.uid)||m.startsTurn!=null&&state.turnNumber<m.startsTurn||m.expiresTurn!=null&&state.turnNumber>m.expiresTurn)continue;const ss=state.sides[side];if(m.duration==='whileActive'&&ss.active?.uid!==m.sourceUid)continue;if(m.duration==='whileInPlay'&&!pokemonOn(ss).some(s=>s.uid===m.sourceUid))continue;const opposingActive=stat==='damageReduction'&&attacker?attacker:state.sides[side==='player'?'opponent':'player'].active;if(m.opponentFilter&&(!opposingActive||!matchesFilter(cardById(opposingActive.cardId),m.opponentFilter,opposingActive)))continue;if(matchesFilter(cardById(slot.cardId),m.filter,slot))values.push(m.amount);}
     return stat==='energyMultiplier'?(values.length?Math.max(...values):0):values.reduce((a,b)=>a+b,0);
   }
   function passiveProtection(effect,type,ctx,slot){
