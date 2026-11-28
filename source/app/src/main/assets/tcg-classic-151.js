@@ -38,6 +38,9 @@ const optional=(label,effect)=>({type:'chooseOption',options:[{label:'Do not use
 // 151 stage 5: shared attack copying, HP modifiers and bench synergy.
 function stage5Attack(a){
  const t=a.text||'';
+ if(a.name==='Spread Filaments'&&t==='Flip 2 coins. Search your deck for a number of Grass Pokémon up to the number of heads and put them onto your Bench. Then, shuffle your deck.')return {type:'sm7Rule',rule:'sv151SpreadFilaments'};
+ if(a.name==='Bye-Bye Flight'&&t==="Choose 1 of your opponent's Benched Pokémon. Shuffle that Pokémon and all attached cards into their deck, and then shuffle this Pokémon and all attached cards into your deck. If your opponent has no Benched Pokémon, this attack does nothing.")return {type:'sm7Rule',rule:'sv151ByeByeFlight'};
+ if(a.name==='Psypower'&&t==="Put 3 damage counters on your opponent's Pokémon in any way you like.")return {type:'sm7Rule',rule:'sv151Psypower'};
  if(a.name==='Devolution Ray'&&t==="If your opponent's Active Pokémon is an evolved Pokémon, devolve it by putting the highest Stage Evolution card on it into your opponent's hand.")return {type:'sm7Rule',rule:'sv151DevolutionRay'};
  if(a.name==='Conversion 4'&&t==='Choose Grass, Fire, Water, Lightning, Psychic, Fighting, Darkness, Metal, or Dragon type. Until the Defending Pokémon leaves the Active Spot, its Weakness is now that type. (The amount of Weakness doesn\'t change.)')return {type:'sm7Rule',rule:'sv151Conversion4'};
  if(a.name==='Colorful Friends'&&t==='Search your deck for up to 3 Pokémon of different types, reveal them, and put them into your hand. Then, shuffle your deck.')return {type:'sm7Rule',rule:'sv151ColorfulFriends'};
@@ -171,6 +174,8 @@ function stage2Attack(a){
  return null;
 }
 function stage2Ability(a){
+ if(a.name==='Mysterious Comet'&&a.text==="Once during your turn, you may put 2 damage counters on 1 of your opponent's Pokémon. If you placed any damage counters in this way, discard this Pokémon and all attached cards.")return activate({type:'sm7Rule',rule:'sv151MysteriousComet'});
+ if(a.name==='Mimic Barrier'&&a.text==="If this Pokémon and your opponent's Active Pokémon have the same amount of Energy attached, prevent all damage done to this Pokémon by attacks from your opponent's Pokémon.")return {type:'passive',effect:{type:'sm7Rule',rule:'sv151MimicBarrier'}};
  if(a.name==='Spirit Return'&&a.text==="When you play this Pokémon from your hand to evolve 1 of your Pokémon during your turn, you may put a Supporter card from your opponent's discard pile into their hand.")return evo({type:'sm7Rule',rule:'sv151SpiritReturn'});
  if(a.name==='Primordial Tentacles'&&a.text==="As long as this Pokémon is in the Active Spot, your opponent's Active Pokémon can't retreat.")return {type:'passive',activeOnly:true,effect:{type:'sm7Rule',rule:'sv151PrimordialTentacles'}};
  if(a.name==='Ancient Way'&&a.text==="Apply Weakness for your opponent's Active Pokémon as ×4 instead.")return {type:'passive',effect:{type:'weaknessMultiplier',multiplier:4}};
