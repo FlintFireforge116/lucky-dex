@@ -6615,3 +6615,5 @@ SV4PT5 STAGE 4 v0.69.677: 209/245 prints registered. Reprints use verified prior
 SV4PT5 STAGE 5 v0.69.678: 224/245 prints registered. New Pokémon and Trainers reuse established engine effects, including attack versus Trainer discard recovery, active-only attack cost modifier, effect-only protection, conditional attack lock and opponent-targeted switching. Standalone deck generation remains gated.
 
 SV4PT5 STAGE 6 v0.69.679: 235/245 prints registered. United Thunder counts all United Wings prints; Clive, Atticus, Paldean Student and Crisis Punch implemented. Standalone deck generation remains gated.
+
+SV4PT5 STAGE 7 v0.69.680: 240/245 prints registered. Shine On, Attraction Wave, Slow-Acting Syncope, Quaking Demolition and Moonlit Hill. Standalone deck generation remains gated.

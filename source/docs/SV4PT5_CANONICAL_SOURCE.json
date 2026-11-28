@@ -3,9 +3,9 @@
   "source": "https://raw.githubusercontent.com/PokemonTCG/pokemon-tcg-data/90f27d0e14cefe48ccb2b8922a7a356b2fcf0072/cards/en/sv4pt5.json",
   "sourceBlobSha": "f0492413ef7751a8503a89a350569500ba180ccb",
   "sourcePrintCount": 245,
-  "registeredPrintCount": 235,
+  "registeredPrintCount": 240,
   "partial": true,
-  "compactSha256": "d28e5b7122d8c2d9bdfb3c3e60692bc73cafbf710ef45f075788af23b4c8ea9f",
+  "compactSha256": "372b39c3956eafcbee9afdef2a21faa75ff000e13b0dcbd89f70df90fde2c67b",
   "verifiedReprints": {
     "sv4pt5-2": "sv2-5",
     "sv4pt5-5": "sv3-22",
