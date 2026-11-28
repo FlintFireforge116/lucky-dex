@@ -6582,3 +6582,5 @@ SV4 STAGE 10 v0.69.661: 200/266 prints. Icicle Sole places counters rather than 
 SV4 STAGE 11 v0.69.662: 208/266 prints. Hollow Hands places counters on Bench only; Gold Coffin triggers on opposing attack KO. Aegislash blocks ex/V attack damage, not effects. Tatsugiri searches then optionally switches. Tulip uses typed discard recovery (Psychic only), preserves Nessa Water behavior. Standalone remains gated.
 
 SV4 STAGE 12 v0.69.663: 215/266 prints. Mela requires a KO last opponent turn, attaches Fire from discard then draws to six only if attached. Garganacl heals the recipient of Fighting Energy by 30; Espathra optional evolution guard, Glittering Eyes checks Tulip in own discard. Standalone remains gated.
+
+SV4 STAGE 13 v0.69.664: 222/266 prints. Vanilluxe checks opposing remaining HP including modifiers, Morpeko moves typed Energy to one Bench recipient, Spinda only guards damage while confused, Porygon coin-triggered opposing Energy movement is mandatory when possible, Gaia Punk discards three Lightning Energy from own board. Standalone gated.
