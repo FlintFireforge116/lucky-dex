@@ -20941,7 +20941,7 @@
             if(!skip&&n>0&&ss.hand.length)ask({kind:'handCard',optional:true},{left:n});else draw(2*(2-n));break;
           }
           if(k==='Oleana'){
-            if(dewGuard(ctx))break;const pool=foe.hand.filter(x=>card(x)?.kind==='trainer');if(!res){log({type:'revealHand',revealedSide:ctx.foeSide,cards:foe.hand.map(x=>x.cardId)});if(pool.length)ask({kind:'handCard',selectionSide:ctx.foeSide,allowedUids:pool.map(x=>x.uid)});break;}
+            if(dewGuard(ctx))break;const pool=foe.hand.filter(x=>matchesFilter(card(x),effect.filter||{kind:'trainer'}));if(!res){log({type:'revealHand',revealedSide:ctx.foeSide,cards:foe.hand.map(x=>x.cardId)});if(pool.length)ask({kind:'handCard',selectionSide:ctx.foeSide,allowedUids:pool.map(x=>x.uid)});break;}
             if(pool.includes(foe.hand[act.choiceHandIndex]))foe.deck.push(...foe.hand.splice(act.choiceHandIndex,1));break;
           }
         }
@@ -31180,6 +31180,11 @@ if(r==='lastResort')return ss.hand.length===0?[{}]:[];if(r==='surgeSwap')return 
        upgradeAbilities(slot,cardById).some(ab=>ab.name==='Roto Motor'&&ab.type==='passive'&&ab.effect?.type==='conditionalAttackCost')&&
        (state.sides[side]?.discard||[]).filter(ref=>{const c=cardById(ref.cardId);return c?.kind==='trainer'&&['Tool','Pokémon Tool'].includes(c.trainerType);}).length>=9)return '';
 
+    // 151 Enthusiastic King: active Ability, same-side Nidoqueen, all printed Energy costs waived.
+    if(state?.format==='classic'&&slot&&!abilitiesSuppressed(state,side,slot,cardById)){
+      const king=upgradeAbilities(slot,cardById).find(ab=>ab.name==='Enthusiastic King'&&ab.type==='passive'&&ab.effect?.type==='conditionalAttackCost');
+      if(king&&pokemonOn(state.sides[side]).some(p=>cardById(p.cardId)?.name==='Nidoqueen'))return '';
+    }
     // Stormfront's Regi Form and Battle Rush remove printed Colorless costs,
     // never a coloured unit or a whole required attached Energy card.
     if(state?.format==='classic'&&slot&&!abilitiesSuppressed(state,side,slot,cardById)){

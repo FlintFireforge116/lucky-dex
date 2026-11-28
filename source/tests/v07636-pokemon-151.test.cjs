@@ -33,7 +33,7 @@ for(const side of ['player','opponent']){
 test('151 stage 2 exact shared effects and explicit remaining dependencies',()=>{
  const by=n=>sv.cardById('sv3pt5-'+n);
  for(const n of [3,4,8,10,18,22,25,35,38,52,55,56,59,82,88,89,97,98,120,123,125,126,127,129,130,134,135,136,144,149,155,159,165])assert.ok(by(n).battleEnabled,`${n}: ${by(n).support.reasons}`);
- for(const n of [53,65,113,132,143,145,152,153,154])assert.equal(by(n).battleEnabled,false,by(n).name);
+ for(const n of [53,65,113,132,152,153,154])assert.equal(by(n).battleEnabled,false,by(n).name);
  for(const c of sv.CARDS.filter(c=>c.battleEnabled)){
    for(const a of c.abilities||[])assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}`);
    if(c.kind==='trainer')assert.ok(fx.supportsEffect(c.effect),c.id);
@@ -181,3 +181,49 @@ function check151DelayedCounters(sv,fx,assert){
 }
 
 test('151 Slow-Acting Acid resolves twelve counters on the original defender exactly once, and clears on switch/removal',()=>check151DelayedCounters(sv,fx,assert));
+
+// Stage 6: verify physical targets, real attack continuation and scoped effects.
+test('151 stage 6 enables eleven prints with complete alternate-art parity',()=>{
+ for(const n of [34,57,143,145,158,162,163,174,192,195,202])assert.ok(sv.cardById('sv3pt5-'+n).battleEnabled,n);
+ for(const n of [192,202])assert.deepEqual(sv.cardById('sv3pt5-'+n).attacks,sv.cardById('sv3pt5-145').attacks);
+ assert.deepEqual(sv.cardById('sv3pt5-195').effect,sv.cardById('sv3pt5-158').effect);
+});
+for(const side of ['player','opponent']){
+ test(side+' Enthusiastic King waives cost only while allied Nidoqueen is present',()=>{
+  const {s,us,them}=scene(side,'sv3pt5-34');us.active.energy={};const legal=()=>core.legalActions(s,side).some(a=>a.type==='attack');
+  assert.equal(legal(),false);them.bench[0]= {...core.makePokemonSlot('sv3pt5-31',1,'opposing-queen'),benchSlot:0};assert.equal(legal(),false);
+  us.bench[0]={...core.makePokemonSlot('sv3pt5-31',1,'allied-queen'),benchSlot:0};assert.equal(legal(),true);
+  us.bench.shift();assert.equal(legal(),false);
+ });
+ test(side+' Primeape Rant and Rave self-confuses and unconfused Raging Smash does no damage',()=>{
+  const one=scene(side,'sv3pt5-57');one.them.active=core.makePokemonSlot('sv3pt5-6',1,'target');const actor=one.us.active;attack(one.s,side);assert.equal(actor.conditions.confusion,true);
+  const two=scene(side,'sv3pt5-57');two.them.active=core.makePokemonSlot('sv3pt5-6',1,'target');const target=two.them.active;attack(two.s,side,1);assert.equal(target.damage,0);
+ });
+ test(side+' Multishot Lightning retains main hit and targets only damaged Benched Pokémon',()=>{
+  for(const hasDamaged of [true,false]){
+   const {s,them}=scene(side,'sv3pt5-145');them.active=core.makePokemonSlot('sv3pt5-6',1,'target');const target=them.active;
+   them.bench=[0,1].map(i=>({...core.makePokemonSlot('sv3pt5-6',1,'zap-b'+i),benchSlot:i}));const bench=them.bench.slice();if(hasDamaged)bench[1].damage=10;
+   attack(s,side);assert.equal(target.damage,120);
+   if(hasDamaged){assert.equal(s.phase,'effectChoice');const choices=core.legalActions(s,side);assert.ok(choices.length);assert.equal(choices.filter(a=>a.choiceBenchIndex===0).length,0,JSON.stringify(choices));const pick=choices.find(a=>a.choiceBenchIndex===1);assert.ok(pick,JSON.stringify(choices));core.applyAction(s,side,pick);assert.equal(bench[1].damage,100);}
+   else assert.notEqual(s.phase,'effectChoice');assert.equal(bench[0].damage,0);
+  }
+ });
+ test(side+' Daisy reveals only own prizes without moving them, Grabber filters Pokémon',()=>{
+  const {s,us,them}=scene(side,'sv3pt5-143');const foe=side==='player'?'opponent':'player';const lookup=data.cardById;
+  const ctx={state:s,side,foeSide:foe,attacker:us.active,defender:them.active,cardById:lookup,action:{},drawCard:b=>b.hand.push(b.deck.shift())};
+  us.deck=[{uid:'draw1',cardId:'sv3pt5-1'},{uid:'draw2',cardId:'sv3pt5-2'}];us.hand=[];us.prizes=[{uid:'prize1',cardId:'sv3pt5-3'}];them.prizes=[{uid:'enemy-prize',cardId:'sv3pt5-4'}];
+  fx.applyEffect(sv.cardById('sv3pt5-158').effect,ctx);assert.deepEqual(us.hand.map(r=>r.uid),['draw1','draw2']);assert.equal(us.prizes.length,1);assert.equal(them.prizes.length,1);
+  const reveal=s.log.find(x=>x.type==='revealPrizes'&&x.privateTo===side);assert.ok(reveal);assert.deepEqual(reveal.cards,['sv3pt5-3']);
+  them.hand=[{uid:'trainer',cardId:'sv3pt5-158'},{uid:'mon',cardId:'sv3pt5-1'}];let request;
+  const effect=sv.cardById('sv3pt5-162').effect;fx.applyEffect(effect,{...ctx,requestChoice:r=>request=r});assert.deepEqual(request.allowedUids,['mon']);
+  fx.applyEffect(effect,{...ctx,resolvingChoice:true,action:{choiceHandIndex:0}});assert.equal(them.hand.length,2);
+  fx.applyEffect(effect,{...ctx,resolvingChoice:true,action:{choiceHandIndex:1}});assert.equal(them.deck.at(-1).uid,'mon');assert.equal(them.hand[0].uid,'trainer');
+ });
+ test(side+' Leftovers heals 20 on owner end turn only, Active only',()=>{
+  const {s,us,them}=scene(side,'sv3pt5-143');const foe=side==='player'?'opponent':'player';const effect=sv.cardById('sv3pt5-163').effect;const actor=us.active;actor.damage=50;
+  const ctx={state:s,side,foeSide:foe,attacker:actor,defender:them.active,cardById:data.cardById,action:{},eventData:{turnSide:foe}};
+  s.activeSide=foe;fx.applyPersistentEvent(effect,'endTurn',ctx);assert.equal(actor.damage,50);
+  s.activeSide=side;ctx.eventData.turnSide=side;fx.applyPersistentEvent(effect,'endTurn',ctx);assert.equal(actor.damage,30);
+  us.bench.push(actor);us.active=us.bench.shift();fx.applyPersistentEvent(effect,'endTurn',ctx);assert.equal(actor.damage,30);
+ });
+}

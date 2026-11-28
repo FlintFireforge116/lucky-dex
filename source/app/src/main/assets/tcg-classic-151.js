@@ -38,6 +38,8 @@ const optional=(label,effect)=>({type:'chooseOption',options:[{label:'Do not use
 // 151 stage 5: shared attack copying, HP modifiers and bench synergy.
 function stage5Attack(a){
  const t=a.text||'';
+ if(a.name==='Rant and Rave'&&t==='This Pokémon is now Confused.')return {type:'status',target:'self',status:'confusion'};
+ if(a.name==='Raging Smash'&&t==="If this Pokémon isn't Confused, this attack does nothing.")return {type:'attackDamageGate',condition:{type:'selfStatus',status:'confusion'}};
  if(a.name==='Friend Tackle'&&t==='If you played a Supporter card from your hand during this turn, this attack does 90 more damage.')return bonus(90,'supporterPlayed');
  if(a.name==='Twister Kick'&&t==="This attack does 10 damage to each of your opponent's Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.) Switch this Pokémon with 1 of your Benched Pokémon.")return seq({type:'bonusDamage',amount:10},{type:'benchDamage',side:'opponent',all:true,amount:10},{type:'switch',target:'self',optional:false});
  if(a.name==='Genome Hacking'&&t==="Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.")return {type:'copyAttack',source:'opponentActive',ignoreUseCosts:true,sm12Copy:true};
@@ -45,12 +47,16 @@ function stage5Attack(a){
 }
 function stage5Ability(a){
  const t=a.text||'';
+ if(a.name==='Enthusiastic King'&&t==='If you have Nidoqueen in play, ignore all Energy in the costs of attacks used by this Pokémon.')return {type:'passive',effect:{type:'conditionalAttackCost',cost:'',condition:{type:'pokemonPresent',side:'self',zone:'inPlay',filter:{name:'Nidoqueen'}}}};
  if(a.name==='Expanding Body'&&t==='If this Pokémon has any Special Energy attached, it gets +100 HP.')return passive('maxHp',100,'self',{hasSpecialEnergy:true});
  if(a.name==='Zooming Draw'&&t==='Once during your turn, you may put 1 damage counter on this Pokémon. If you do, draw a card.')return activate(seq({type:'placeDamageCounters',target:'self',amount:10},{type:'draw',amount:1}));
  if(a.name==='Cheering Bone'&&t==="As long as this Pokémon is on your Bench, attacks used by your Marowak do 30 more damage to your opponent's Active Pokémon (before applying Weakness and Resistance).")return {...passive('attackDamageActiveOnly',30,'team',{name:'Marowak'}),benchOnly:true};
  return null;
 }
 function stage5Trainer(c,text){
+ if(c.name==="Daisy's Help"&&text==='Draw 2 cards. Look at your face-down Prize cards.')return seq({type:'draw',amount:2},{type:'sm7Rule',rule:'sm8EyeOpener'});
+ if(c.name==='Grabber'&&text==='Your opponent reveals their hand, and you put a Pokémon you find there on the bottom of their deck.')return {type:'sm7Rule',rule:'swsh2Oleana',filter:{kind:'pokemon'}};
+ if(c.name==='Leftovers'&&text==='At the end of your turn, if the Pokémon this card is attached to is in the Active Spot, heal 20 damage from it.')return {type:'triggeredEffect',event:'endTurn',turn:'owner',activeOnly:true,effect:heal(20)};
  if(c.name==='Protective Goggles'&&text==='The Basic Pokémon this card is attached to has no Weakness.')return {type:'weaknessGuard',duration:'whileInPlay',scope:'self',filter:{stage:'Basic'}};
  return null;
 }
@@ -147,7 +153,7 @@ function stage2Attack(a){
  if(a.name==='Splashy Splash'&&t==='Flip a coin until you get tails. For each heads, draw a card.')return {type:'coinUntilTails',effect:{type:'draw',amount:1}};
  if(['Fighting Whirlpool','Fighting Lightning','Fighting Blaze'].includes(a.name)&&t==="If your opponent's Active Pokémon is a Pokémon ex or Pokémon V, this attack does 90 more damage.")return {type:'bonusDamage',amount:90,condition:{type:'opponentMatches',filter:{anyOf:[{nameContains:' ex'},{tag:'pokemon-v'}]}}};
  if(a.name==='Blizzard'&&t==="This attack also does 10 damage to each of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)")return {type:'benchDamage',side:'opponent',all:true,amount:10};
- if(a.name==='Multishot Lightning'&&t==="This attack also does 90 damage to 1 of your opponent's Benched Pokémon that has any damage counters on it. (Don't apply Weakness and Resistance for Benched Pokémon.)")return {type:'selectedDamage',target:'opponentBench',amount:90,filter:{damaged:true}};
+ if(a.name==='Multishot Lightning'&&t==="This attack also does 90 damage to 1 of your opponent's Benched Pokémon that has any damage counters on it. (Don't apply Weakness and Resistance for Benched Pokémon.)")return {type:'multiTargetDamage',target:'opponentBench',count:1,amount:90,filter:{damaged:true}};
  return null;
 }
 function stage2Ability(a){
@@ -223,8 +229,7 @@ function makeCard(c){
  if(c.kind==='pokemon'){
   const attacks=c.attacks.map(a=>{const effect=attackEffect(a);if(effect.type==='unsupported')reasons.push('Unimplemented attack: '+a.name);return {name:a.name,cost:a.cost.map(t=>codes[t]).join(''),damage:a.damage.includes('×')?0:Number(a.damage.match(/\d+/)?.[0]||0),damageText:a.damage||null,text:a.text,effect};});
   const abilities=c.abilities.map(a=>{const implemented=stage2Ability(a);if(!implemented)reasons.push('Unimplemented Ability: '+a.name);return {name:a.name,text:a.text,printedPowerType:'ability',disabledByStatus:false,...(implemented||{type:'passive',effect:unsupported})};});
-  if(['Persian','Snorlax'].includes(c.name))reasons.push('Named 151 Trainer dependency awaits implementation');
-  if(c.name==='Zapdos ex')reasons.push('Multishot Lightning damaged Bench target selection awaits outcome audit');
+  if(c.name==='Persian')reasons.push('Named 151 Trainer dependency awaits implementation');
 
   if(/^Antique /.test(c.evolvesFrom||''))reasons.push('Antique Fossil evolution dependency not implemented');
   const ex=c.subtypes.includes('ex'),energyTypes=[...new Set(c.attacks.flatMap(a=>a.cost).filter(t=>t!=='Colorless'))];
