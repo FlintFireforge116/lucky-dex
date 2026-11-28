@@ -20882,8 +20882,8 @@
             if(!skip&&left>0&&room(ss)&&pool().length)ask({kind:'deckCard',allowedUids:pool().map(x=>x.uid),optional:true},{left});else ctx.shuffle?.(ctx.state,ss.deck);break;
           }
           if(k==='Nessa'){
-            let left=effect.left??4;const opts=()=>[...ss.discard.filter(x=>card(x)?.kind==='pokemon'&&hasType(card(x),'Water')||basicType(x)==='Water').map(x=>({uid:x.uid,label:card(x).name})),...(Number(ss.energyDiscard?.Water)>0?[{type:'Water',label:'Water Energy (discard)'}]:[])];
-            if(res&&!skip&&ss.hand.length<cap()){const o=effect.opts?.[act.choiceOption];if(o?.uid){const i=ss.discard.findIndex(x=>x.uid===o.uid);if(i>=0&&opts().some(x=>x.uid===o.uid)){ss.hand.push(...ss.discard.splice(i,1));left--;}}else if(o?.type&&ss.energyDiscard.Water>0){ss.energyDiscard.Water--;neoRecoveredEnergyToHand(ctx,ss,'Water',1);left--;}}
+            const type=effect.energyType||'Water';let left=effect.left??4;const opts=()=>[...ss.discard.filter(x=>card(x)?.kind==='pokemon'&&hasType(card(x),type)||basicType(x)===type).map(x=>({uid:x.uid,label:card(x).name})),...(Number(ss.energyDiscard?.[type])>0?[{type,label:type+' Energy (discard)'}]:[])];
+            if(res&&!skip&&ss.hand.length<cap()){const o=effect.opts?.[act.choiceOption];if(o?.uid){const i=ss.discard.findIndex(x=>x.uid===o.uid);if(i>=0&&opts().some(x=>x.uid===o.uid)){ss.hand.push(...ss.discard.splice(i,1));left--;}}else if(o?.type&&ss.energyDiscard[type]>0){ss.energyDiscard[type]--;neoRecoveredEnergyToHand(ctx,ss,type,1);left--;}}
             const list=opts();if(!skip&&left>0&&list.length&&ss.hand.length<cap())ask({kind:'option',options:list.map(x=>x.label),optional:true},{left,opts:list});break;
           }
           if(k==='Cheese'){
@@ -30533,7 +30533,7 @@ if(ctx.isAbility){const targetSide=pokemonOn(own(ctx)).includes(s)?ctx.side:ctx.
       if(!ctx.isAttack&&r==='swsh4LunarBlessing')return ss.active&&(Number(ss.active.energy?.Psychic)>0||(ss.active.specialEnergy||[]).some(x=>attachedSpecialProvidesType(x,'Psychic',ss.active,ctx.cardById,ctx.state)))&&(ss.active.damage>0||Object.keys(ss.active.conditions||{}).length)?[{}]:[];
       if(!ctx.isAttack&&r==='swsh4Cheese')return pokemonOn(ss).some(p=>p.damage>0&&(totalEnergy(p.energy)>0||(p.specialEnergy||[]).length)&&!healingIsBlocked(ctx.state,p,ctx.cardById))?[{}]:[];
       if(!ctx.isAttack&&r==='swsh4CaraLiss')return ss.bench.length<Number(ss.benchLimit??3)&&ss.deck.some(x=>ctx.cardById(x.cardId)?.name==='Rare Fossil'&&ctx.canPutInPlay?.(ss,x)!==false)?[{}]:[];
-      if(!ctx.isAttack&&r==='swsh4Nessa')return Number(ss.energyDiscard?.Water)>0||ss.discard.some(x=>{const c=ctx.cardById(x.cardId);return c?.kind==='pokemon'&&hasType(c,'Water')||c?.basicEnergy&&c.subtype==='Water';})?[{}]:[];
+      if(!ctx.isAttack&&r==='swsh4Nessa'){const type=effect.energyType||'Water';return Number(ss.energyDiscard?.[type])>0||ss.discard.some(x=>{const c=ctx.cardById(x.cardId);return c?.kind==='pokemon'&&hasType(c,type)||c?.basicEnergy&&c.subtype===type;})?[{}]:[];}
             if(ctx.isAttack&&r==='swsh5Nature')return [{effectSelection:'',choiceLabel:'80 damage — keep Energy'},{effectSelection:'boost',choiceLabel:'160 damage — discard all Energy'}];
       if(!ctx.isAttack&&r==='swsh6Arcana')return ss.deck.length?[{}]:[];
       if(!ctx.isAttack&&r==='swsh6Peonia')return ss.prizes.length?[{}]:[];

@@ -298,6 +298,7 @@ function runSmokes(cards,{data,core,opponents}){
     if(card.setId==='sv4'&&card.name==='Counter Catcher'){const foe=s.sides[side==='player'?'opponent':'player'];foe.prizes=foe.prizes.slice(0,Math.max(0,s.sides[side].prizes.length-1));}
     if(card.setId==='sv4'&&card.name==='Earthen Vessel'){const own=s.sides[side];own.hand.push({cardId:'sv4-1',uid:'audit-vessel-pay'});own.deck.unshift({cardId:'base1-98',uid:'audit-vessel-energy'});}
     if(card.id==='sv4-180'){const own=s.sides[side];own.hand.push({cardId:'sv4-1',uid:'audit-radar-pay'});own.deck.unshift({cardId:'sv4-70',uid:'audit-radar-future'});}
+    if(card.setId==='sv4'&&card.name==='Tulip'){s.sides[side].energyDiscard={Psychic:2};s.sides[side].discard.push({cardId:'sv4-72',uid:'audit-tulip-psychic'});}
     if(card.setId==='sv4'&&card.effect?.rule==='sv4Sada'){const own=s.sides[side];own.bench[0].cardId='sv4-86';own.bench[0].stack=['sv4-86'];own.energyDiscard={Psychic:1};}
     if(card.id==='sv4-74'&&ix===1)s.sides[side].active.energy={Psychic:3};
     // Erika requires an opposing hand card; supply a real eligible Basic for all artwork variants.
