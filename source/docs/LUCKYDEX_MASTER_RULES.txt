@@ -6564,3 +6564,5 @@ SV4 STAGE 1 v0.69.652: Paradox Rift 60/266 verified prints registered. The pinne
 SV4 STAGE 2 v0.69.653: 93/266 verified prints registered and enabled. Reuse shared attack gates, named attack locks, hand count, damage counter placement (not attack damage), Energy type checks, healing, optional switching and conditional bonuses. Maintain alternate artwork parity. Protection must prevent effects as well as damage where the printed text specifies both. Standalone generation remains gated; Ancient/Future and TMs deferred.
 
 SV4 STAGE 3 v0.69.654: 112/266 verified prints. Reuse typed Energy attachment, discard-count damage, conditional Tool attachment, damage-counter movement, attack requirements and poison amount. Preserve alternate-art parity; standalone deck generation remains gated.
+
+SV4 STAGE 4 v0.69.655: 126/266 verified prints. Reuse target-bound attack-cost increases, counter retaliation, bounded top-deck Basic Energy attachment, named next-turn bonuses, selectable Item/Supporter locks and exact Supporter coin branches. Keep alternate art parity and standalone gate.
