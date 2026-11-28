@@ -6570,3 +6570,5 @@ SV4 STAGE 4 v0.69.655: 126/266 verified prints. Reuse target-bound attack-cost i
 SV4 STAGE 5 v0.69.656: 145/266 verified prints. Preserve Ancient/Future metadata, lowercase ex prize rules, attack-only extra prizes, typed Basic Energy search payment, exact first-turn second-player bonus, and shuffle only unselected Rika cards before bottoming them. Standalone gate remains.
 
 SV4 STAGE 6 v0.69.657: 153/266 prints. Ancient/Future Capsule effects only on appropriate Pokémon, honor Tool suppression, clear Ancient conditions continuously, Future damage only to opposing Active before matchup, Techno Radar searches Future Pokémon only after payment, Brute Bonnet needs an attached Capsule even under Tool suppression. Standalone gate remains.
+
+SV4 STAGE 7 v0.69.658: 162/266 prints. Sada selects distinct Ancient slots and consumes Basic discard Energy (ledger or physical), draws once only after attachment. Sandy Shocks uses opposing remaining prizes and self discard attachment. Scream Tail selected attack scales from own counters; applies matchup only to Active. Crimson Armor applies only undamaged and unsuppressed. Standalone gate remains.
