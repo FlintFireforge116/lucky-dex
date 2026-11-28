@@ -21260,6 +21260,7 @@
             if(skip)break;
             if(effect.stage==='target'&&res){const p=selected(ctx,ss);if(!targets().includes(p))break;let ok=false;if(hand){const ref=pool().find(x=>x.uid===effect.uid);if(ref&&(ctx.handEnergyTargets?.(ref)||[]).includes(p)){if(!authorizeAuroraHand(ctx,ss,ref,effect))break;ok=!!ctx.attachPhysicalEnergy?.(ref,p,true);}}else{const t=effect.energyTypeChosen;if(neoTakeDiscard(ctx,ss,t,1)){attach(p,t);ok=true;}}
               if(ok&&effect.drawAfter)draw(effect.drawAfter);
+              if(ok&&effect.drawToAfter)applyEffect({type:'drawToHandSize',size:effect.drawToAfter},fresh);
               if(ok&&effect.counterAfter){p.damage=Number(p.damage||0)+Number(effect.counterAfter);log({type:'damageCounters',targetCardId:p.cardId,amount:Number(effect.counterAfter)});}
               if(ok&&effect.healAll)applyEffect({type:'heal',target:'eventPokemon',amount:999},{...fresh,eventData:{target:p}});
               if(ok&&effect.heal&&!healingIsBlocked(ctx.state,p,ctx.cardById))p.damage=Math.max(0,Number(p.damage||0)-effect.heal);
