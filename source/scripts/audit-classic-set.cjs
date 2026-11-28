@@ -295,6 +295,8 @@ function runSmokes(cards,{data,core,opponents}){
       if(card.name==='Saguaro')own.active.damage=60;
       if(card.name==='Superior Energy Retrieval'){own.hand.push({cardId:'sv2-1',uid:'audit-superior-pay1'},{cardId:'sv2-4',uid:'audit-superior-pay2'});own.discard.push({cardId:'base1-102',uid:'audit-superior-water'});}
     }
+    // Erika requires an opposing hand card; supply a real eligible Basic for all artwork variants.
+    if(card.setId==='sv3pt5'&&card.effect?.rule==='sv151Erika')s.sides[side==='player'?'opponent':'player'].hand.push({cardId:'sv3pt5-1',uid:'audit-erika-basic'});
     // Night Cyclone moves every attached unit; use a realistic paid attack fixture
     // rather than the default 108-energy stress board and 35-choice cap.
     if(card.name==='Ortega'&&card.setId==='sv3')s.sides[side==='player'?'opponent':'player'].hand.push({cardId:'sv3-1',uid:'audit-ortega-hand'});

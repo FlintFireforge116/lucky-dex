@@ -720,7 +720,7 @@
       picks.sort((a,b)=>{const score=x=>{const p=slotFor(me,x.choiceTarget,x.choiceBenchIndex);return (p===me.active?-20:0)+attachedCount(p);};return score(b)-score(a);});
       return picks[0];
     }
-    if(state.phase==='effectChoice'&&state.pendingChoice?.special==='swsh5DeepSeaKing')return legal.find(a=>!a.choiceSkip)||legal[0];
+    if(state.phase==='effectChoice'&&['swsh5DeepSeaKing','sv151ElectricalGrounding'].includes(state.pendingChoice?.special))return legal.find(a=>!a.choiceSkip)||legal[0];
     if(state.phase==='effectChoice'&&state.pendingChoice?.effect?.rule==='swsh35Adornment')return legal.find(a=>!a.choiceSkip)||legal[0];
     if(Number(actionCount||0)>=30)return legal.find(a=>a.type==='attachSpecial')||legal.find(a=>a.type==='attach')||legal.find(a=>a.type==='attack')||legal.find(a=>a.type==='endTurn')||legal.find(a=>a.choiceLabel==='Done')||legal[0];
     // Effect choices may expose private deck/hand cards. Advanced search works

@@ -10,7 +10,7 @@ test('pinned 151 catalogue has all 207 numbered prints with exact identity, rule
   if(c.kind==='pokemon'){assert.deepEqual([c.hp,c.types,c.evolvesFrom,c.retreat,c.weakness,c.resistance],[p.hp,p.types,p.evolvesFrom,p.retreat,p.weakness,p.resistance]);assert.deepEqual(c.attacks.map(a=>[a.name,a.cost,a.damageText||'',a.text]),p.attacks.map(a=>[a.name,a.cost.map(x=>codes[x]).join(''),a.damage,a.text]));assert.deepEqual(c.abilities.map(a=>[a.name,a.text]),p.abilities.map(a=>[a.name,a.text]));for(const a of c.attacks)if(c.battleEnabled){assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}: ${fx.validateEffect(a.effect).join('; ')}`);assert.equal(a.effect.type==='noop',!a.text);}}
   if(c.kind==='trainer')assert.equal(c.text,p.rules[0]);if(!c.battleEnabled){assert.equal(c.deckEligible,false);assert.ok(c.support.reasons.length);}
  }
- for(const n of [65,113,132])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,false);
+ for(const n of [65,27,54])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,false);
  for(const n of [1,2,13,17,32,50,63,83,86,115,206,207])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,true);
  assert.equal(sv.cardById('sv3pt5-207').deckEligible,false);
  assert.ok(sv.CARDS.filter(c=>c.battleEnabled).length>=50);
@@ -33,7 +33,7 @@ for(const side of ['player','opponent']){
 test('151 stage 2 exact shared effects and explicit remaining dependencies',()=>{
  const by=n=>sv.cardById('sv3pt5-'+n);
  for(const n of [3,4,8,10,18,22,25,35,38,52,55,56,59,82,88,89,97,98,120,123,125,126,127,129,130,134,135,136,144,149,155,159,165])assert.ok(by(n).battleEnabled,`${n}: ${by(n).support.reasons}`);
- for(const n of [65,113,132])assert.equal(by(n).battleEnabled,false,by(n).name);
+ for(const n of [65,27,54])assert.equal(by(n).battleEnabled,false,by(n).name);
  for(const c of sv.CARDS.filter(c=>c.battleEnabled)){
    for(const a of c.abilities||[])assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}`);
    if(c.kind==='trainer')assert.ok(fx.supportsEffect(c.effect),c.id);
@@ -354,7 +354,7 @@ for(const side of ['player','opponent']){
 }
 
 // Stage 11: direct deck placement, returning Pokémon, counter placement and immunity.
-test('151 stage 11 enables five more prints',()=>{for(const n of [12,47,121,122,179])assert.ok(sv.cardById('sv3pt5-'+n).battleEnabled,n);assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length,198);});
+test('151 stage 11 enables five more prints',()=>{for(const n of [12,47,121,122,179])assert.ok(sv.cardById('sv3pt5-'+n).battleEnabled,n);assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length>=198,true);});
 for(const side of ['player','opponent']){
  const foe=side==='player'?'opponent':'player';
  test(side+' Spread Filaments uses two flips, can place evolved Grass Pokémon, and respects capacity and optional stop',()=>{
@@ -371,5 +371,20 @@ for(const side of ['player','opponent']){
  });
  test(side+' Mysterious Comet discards source and attachments after placing counters and excludes protected Amber',()=>{
   for(const blocked of [false,true]){const {s,us,them}=scene(side,'sv3pt5-1');const source=us.bench[0]=Object.assign(core.makePokemonSlot('sv3pt5-121',1,'comet'),{benchSlot:0,stack:['sv3pt5-120','sv3pt5-121'],energy:{Psychic:1},specialEnergy:[{uid:'comet-energy',cardId:'base1-96'}]});them.active=core.makePokemonSlot(blocked?'sv3pt5-154':'sv3pt5-6',1,'comet-target');const target=them.active;const before=them.prizes.length;const a=core.legalActions(s,side).find(x=>x.type==='ability'&&x.target==='bench'&&x.benchIndex===0);assert.ok(a,JSON.stringify(core.legalActions(s,side)));core.applyAction(s,side,a);const pick=core.legalActions(s,side).find(x=>x.choiceTarget==='active');if(blocked){assert.equal(pick,undefined);const otherTarget=core.legalActions(s,side).find(x=>x.choiceTarget==='bench');assert.ok(otherTarget);core.applyAction(s,side,otherTarget);assert.equal(target.damage,0);}else{assert.ok(pick);core.applyAction(s,side,pick);assert.equal(target.damage,20);}assert.equal(us.bench.includes(source),false);assert.equal(us.discard.some(x=>x.uid==='comet-energy'),true);assert.equal(them.prizes.length,before);}
+ });
+}
+
+// Stage 12: Active replacement, Prize interception and attack-damage KO rescue.
+test('151 stage 12 enables Ditto, Chansey and Raichu',()=>{for(const n of [26,113,132])assert.ok(sv.cardById('sv3pt5-'+n).battleEnabled);assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length,201);});
+for(const side of ['player','opponent']){
+ test(side+' Transformative Start is first-turn Active-only and replaces Ditto with a non-Ditto Basic, discarding attachments',()=>{
+  for(const mode of ['replace','skip','later','bench']){const {s,us,them}=scene(side,'sv3pt5-132');const ditto=us.active;us.turnCount=mode==='later'?2:1;s.turnNumber=side==='player'?1:2;ditto.energy={Lightning:1};ditto.tool={uid:'ditto-tool',cardId:'sv3pt5-163'};us.deck=[132,2,4].map(n=>({uid:'ditto-search'+n,cardId:'sv3pt5-'+n}));if(mode==='bench'){[us.active,us.bench[0]]=[us.bench[0],ditto];ditto.benchSlot=0;us.active.benchSlot=null;}
+  const ability=core.legalActions(s,side).find(a=>a.type==='ability'&&a.target===(mode==='bench'?'bench':'active'));if(mode==='later'||mode==='bench'){assert.equal(ability,undefined);continue;}assert.ok(ability);core.applyAction(s,side,ability);const actions=core.legalActions(s,side);assert.ok(!actions.some(a=>['sv3pt5-132','sv3pt5-2'].includes(a.choiceCardId)));const pick=actions.find(a=>mode==='skip'?a.choiceSkip:a.choiceCardId==='sv3pt5-4');assert.ok(pick);core.applyAction(s,side,pick);if(mode==='skip'){assert.equal(us.active,ditto);continue;}assert.equal(us.active.cardId,'sv3pt5-4');assert.equal(us.active.uid,'ditto-search4');assert.deepEqual(us.active.energy,{});assert.ok(us.discard.some(x=>x.uid==='ditto-tool'));assert.equal(us.energyDiscard.Lightning,1);assert.equal(us.active.playedOnSideTurn,1);}
+ });
+ test(side+' Lucky Bonus triggers only on a face-down Prize, optional Bench and heads awards one more',()=>{
+  for(const mode of ['heads','tails','decline','faceup','full']){const {s,us,them}=scene(side,'sv3pt5-4');us.bench=mode==='full'?us.bench:us.bench.slice(0,1);them.active=core.makePokemonSlot('sv3pt5-1',1,'victim');them.active.damage=50;us.prizes=[{uid:'chansey',cardId:'sv3pt5-113',faceUp:mode==='faceup'},{uid:'bonus',cardId:'sv3pt5-113',faceUp:mode==='faceup'}];s.rngState=1;attack(s,side,1);if(s.pendingChoice?.special==='chooseClassicPrize'){const pick=core.legalActions(s,side).find(a=>a.choicePrizeIndex===0);assert.ok(pick);core.applyAction(s,side,pick);}if(mode==='faceup'||mode==='full'){assert.notEqual(s.pendingChoice?.special,'sm7WishPrize');assert.ok(us.hand.some(r=>r.cardId==='sv3pt5-113'));continue;}assert.equal(s.pendingChoice?.special,'sm7WishPrize');const ref=s.sm7WishPrize.ref;s.rngState=mode==='tails'?0xffffffff:1;if(mode==='tails')us.bw9CoinTailsUntil=s.turnNumber;const pick=core.legalActions(s,side).find(a=>a.choiceOption===(mode==='decline'?0:1));assert.ok(pick);core.applyAction(s,side,pick);if(mode==='decline'){assert.ok(us.hand.some(r=>r.uid===ref.uid));continue;}assert.ok(us.bench.some(p=>p.uid===ref.uid));assert.equal(s.log.findLast(x=>x.reason==='Lucky Bonus').heads,mode==='heads');if(s.pendingChoice?.special==='chooseClassicPrize')core.applyAction(s,side,core.legalActions(s,side)[0]);assert.equal(us.prizesTaken,mode==='heads'?2:1);}
+ });
+ test(side+' Electrical Grounding moves just one Lightning Energy per Raichu before ally attack KO, optional and suppressed',()=>{
+  const foe=side==='player'?'opponent':'player';for(const mode of ['move','skip','suppressed']){const {s,us,them}=scene(foe,'sv3pt5-6');them.active=core.makePokemonSlot('sv3pt5-1',1,'ground-victim');them.active.energy={Lightning:2,Fire:1};const r=them.bench[0]=Object.assign(core.makePokemonSlot('sv3pt5-26',1,'raichu'),{benchSlot:0});if(mode==='suppressed'){s.xy7HexManiacUntil=s.turnNumber;}attack(s,foe,1);if(mode==='suppressed'){assert.notEqual(s.pendingChoice?.special,'sv151ElectricalGrounding');assert.equal(r.energy.Lightning,undefined);continue;}assert.equal(s.pendingChoice?.special,'sv151ElectricalGrounding');const pick=core.legalActions(s,side).find(a=>mode==='skip'?a.choiceSkip:!a.choiceSkip);assert.ok(pick);core.applyAction(s,side,pick);assert.equal(r.energy.Lightning||0,mode==='move'?1:0);assert.equal(them.energyDiscard.Lightning,mode==='move'?1:2);}
  });
 }
