@@ -1,0 +1,9 @@
+{
+  "setId": "sv4pt5",
+  "source": "https://raw.githubusercontent.com/PokemonTCG/pokemon-tcg-data/90f27d0e14cefe48ccb2b8922a7a356b2fcf0072/cards/en/sv4pt5.json",
+  "sourceBlobSha": "f0492413ef7751a8503a89a350569500ba180ccb",
+  "sourcePrintCount": 245,
+  "registeredPrintCount": 83,
+  "partial": true,
+  "compactSha256": "aa796d19c14f5bff1afd15d9cf7c4fab056d469614bd8911290fa3eab2d80f95"
+}

@@ -12,7 +12,7 @@ const synergy=require('../app/src/main/assets/tcg-deck-synergy.js');
 const emptyLocalCatalogues=new Set(['bw11','xy1','xy2','xy3','xy4','xy5','xy6','xy7','xy8','xy9','xy10','sm2','sm5','sm6']);
 // DET1 and the three prerequisite SWSH promo prints are deliberately mixed-only.
 // Each has a separate mixed-set audit below; never skip a complete expansion here.
-const mixedOnlyCatalogues=new Set(['det1','swshp','sv4']);
+const mixedOnlyCatalogues=new Set(['det1','swshp','sv4pt5']);
 function ownedFor(set){return classic.CARDS.filter(c=>c.setId===set&&c.battleEnabled&&c.deckEligible!==false).map(c=>({gameplayId:c.id,quantity:4}));}
 function trainerCounts(ids){
  const byName=new Map();
