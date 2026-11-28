@@ -6568,3 +6568,5 @@ SV4 STAGE 3 v0.69.654: 112/266 verified prints. Reuse typed Energy attachment, d
 SV4 STAGE 4 v0.69.655: 126/266 verified prints. Reuse target-bound attack-cost increases, counter retaliation, bounded top-deck Basic Energy attachment, named next-turn bonuses, selectable Item/Supporter locks and exact Supporter coin branches. Keep alternate art parity and standalone gate.
 
 SV4 STAGE 5 v0.69.656: 145/266 verified prints. Preserve Ancient/Future metadata, lowercase ex prize rules, attack-only extra prizes, typed Basic Energy search payment, exact first-turn second-player bonus, and shuffle only unselected Rika cards before bottoming them. Standalone gate remains.
+
+SV4 STAGE 6 v0.69.657: 153/266 prints. Ancient/Future Capsule effects only on appropriate Pokémon, honor Tool suppression, clear Ancient conditions continuously, Future damage only to opposing Active before matchup, Techno Radar searches Future Pokémon only after payment, Brute Bonnet needs an attached Capsule even under Tool suppression. Standalone gate remains.

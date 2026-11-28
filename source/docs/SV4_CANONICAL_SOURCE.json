@@ -3,7 +3,7 @@
   "source": "https://raw.githubusercontent.com/PokemonTCG/pokemon-tcg-data/90f27d0e14cefe48ccb2b8922a7a356b2fcf0072/cards/en/sv4.json",
   "sourceBlobSha": "0d4d4f7fcda2b0cc0348df5d47ca67095b45ffc1",
   "sourcePrintCount": 266,
-  "registeredPrintCount": 145,
+  "registeredPrintCount": 153,
   "partial": true,
-  "compactSha256": "cac85be76d4a593ef95e854719261dc8ab242ebe10b9f56e9f314b7d9301d609"
+  "compactSha256": "51983610855459b18619d87eac9c9aec946f49ac989e7f4b51010c816ee0c290"
 }

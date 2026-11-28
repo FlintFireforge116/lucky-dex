@@ -3407,7 +3407,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
       if(state.format==='classic'&&target.cardId==='sm8-150'&&card.name?.includes('Fairy Charm')&&!effects.abilitiesSuppressed(state,side,target,data.cardById)){
         beginEffectChoice(state,side,target,{kind:'option',side:'self',options:['Do not use Charmed Charm','Confuse opposing Active'],effect:{type:'sm7Rule',rule:'sm8CharmedCharm'},resume:'trainer'});return;
       }
-      const ctx=effectContext(state,side,action,target);effects.applyEffect(card.onAttach,ctx);effects.applyPersistentEvent(card.effect,'onAttach',ctx);resolveKnockOut(state,null);return;}
+      const ctx=effectContext(state,side,action,target);effects.applyEffect(card.onAttach,ctx);effects.applyPersistentEvent(card.effect,'onAttach',ctx);if(card.id==='sv4-159')effects.applyContinuousRules(state,data.cardById);resolveKnockOut(state,null);return;}
     if(type==='Stadium'){
       if(state.format==='classic'&&state.stadium?.cardId==='sm12-187'){const prior=state.stadium;state.sides[prior.ownerSide||side].discard.push({uid:prior.uid,cardId:prior.cardId});s.discard.push(ref);state.stadium=null;s.stadiumUsed=true;effects.applyContinuousRules?.(state,data.cardById);resolveKnockOut(state,null);return;}
       state.lentalDamOverflow=activeStadium(state)?.cardId==='SNAPFLORIO-108';
