@@ -973,7 +973,7 @@
     if(gym==='ex16-79'&&data.cardById(slot.cardId)?.types?.includes('Psychic'))stadiumCost-=2;
     if(state.format==='classic'&&gym==='ex4-78'&&!ownerName.startsWith("Team Aqua's"))stadiumCost+=1;
     if(state.format==='classic'&&gym==='ex3-85'&&data.cardById(slot.cardId)?.types?.some(t=>['Fire','Water'].includes(t)))stadiumCost-=1;
-    if(gym==='sv1-167'&&data.cardById(slot.cardId)?.stage==='Basic')stadiumCost-=1;
+    if(['sv1-167','sv4-263'].includes(gym)&&data.cardById(slot.cardId)?.stage==='Basic')stadiumCost-=1;
     if(gym==='bw4-91'&&data.cardById(slot.cardId)?.stage==='Basic')stadiumCost-=1;
     if(state.format==='classic'&&gym==='neo4-92'&&['Basic','Baby'].includes(data.cardById(slot.cardId)?.stage))stadiumCost+=1;
     if(state.format==='classic'&&Number(slot?.neoDestinyRetreatExtraUntil||0)>=state.turnNumber)stadiumCost+=1;
@@ -1654,7 +1654,7 @@
       // Emerging Powers Gothitelle: Magic Room blocks opposing Items only while Active.
       if(state.format==='classic'&&trainerType(card)==='Item'&&foe.active?.cardId==='bw2-47'&&
         !effects.abilitiesSuppressed(state,side==='player'?'opponent':'player',foe.active,data.cardById))return;
-      if(['sm4-91','sm4-120'].includes(card.id)&&((s.prizes||[]).length<=(foe.prizes||[]).length||!foe.bench.length))return;
+      if(['sm4-91','sm4-120','sv4-160','sv4-264'].includes(card.id)&&((s.prizes||[]).length<=(foe.prizes||[]).length||!foe.bench.length))return;
       if(card.id==='sm11-186'&&!s.hand.some(r=>data.cardById(r.cardId)?.kind==='pokemon'&&data.cardById(r.cardId)?.attacks?.length))return;
       if(['xy11-102','swsh7-146'].includes(card.id))return; // Prize-only Items are never playable from the hand.
       if(state.format==='classic'&&trainerType(card)==='Item'&&classicItemPlayLocked(state,side))return;
