@@ -33,7 +33,7 @@ for(const side of ['player','opponent']){
 test('151 stage 2 exact shared effects and explicit remaining dependencies',()=>{
  const by=n=>sv.cardById('sv3pt5-'+n);
  for(const n of [3,4,8,10,18,22,25,35,38,52,55,56,59,82,88,89,97,98,120,123,125,126,127,129,130,134,135,136,144,149,155,159,165])assert.ok(by(n).battleEnabled,`${n}: ${by(n).support.reasons}`);
- for(const n of [53,65,113,132,152,153,154])assert.equal(by(n).battleEnabled,false,by(n).name);
+ for(const n of [65,113,132,152,153,154])assert.equal(by(n).battleEnabled,false,by(n).name);
  for(const c of sv.CARDS.filter(c=>c.battleEnabled)){
    for(const a of c.abilities||[])assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}`);
    if(c.kind==='trainer')assert.ok(fx.supportsEffect(c.effect),c.id);
@@ -231,7 +231,7 @@ for(const side of ['player','opponent']){
 // Stage 7: exact physical deck windows and reused pre-damage choices.
 test('151 stage 7 enables six prints',()=>{
  for(const n of [44,45,73,95,101,117])assert.ok(sv.cardById('sv3pt5-'+n).battleEnabled,n);
- assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length,171);
+ assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length>=171,true);
  const e=sv.cardById('sv3pt5-73').attacks[1].effect;assert.equal(fx.supportsEffect({...e,coins:2}),false);assert.equal(fx.supportsEffect({...e,firstTailStatus:'invalid'}),false);
 });
 for(const side of ['player','opponent']){
@@ -256,5 +256,35 @@ for(const side of ['player','opponent']){
    const {s,us}=scene(side,from);us.hand=[{cardId:id,uid:'evolve-643'}];us.deck=Array.from({length:count+1},(_,i)=>({cardId:i===0||i===count?'base1-99':'sv3pt5-1',uid:'window'+i}));const initial=us.active.energy.Grass;
    const evo=core.legalActions(s,side).find(a=>a.type==='evolve'&&a.target==='active');assert.ok(evo,JSON.stringify(core.legalActions(s,side)));core.applyAction(s,side,evo);assert.equal(us.active.cardId,id);assert.equal(s.phase,'effectChoice');const options=core.legalActions(s,side).filter(a=>!a.choiceSkip);assert.equal(options.length,1);core.applyAction(s,side,options[0]);const pick=core.legalActions(s,side).find(a=>a.choiceTarget==='active');assert.ok(pick,JSON.stringify(core.legalActions(s,side)));core.applyAction(s,side,pick);assert.equal(us.active.energy.Grass,initial+1);assert.ok(us.deck.some(r=>r.uid==='window'+count));assert.ok(!us.deck.some(r=>r.uid==='window0'));
   }
+ });
+}
+
+// Stage 8: named Supporters and their dependent Pokémon.
+test('151 stage 8 enables ten prints and preserves Supporter artwork parity',()=>{
+ for(const n of [53,112,114,160,161,178,196,197,203,204])assert.ok(sv.cardById('sv3pt5-'+n).battleEnabled,n);
+ assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length,181);
+ for(const [a,b] of [[160,196],[160,203],[161,197],[161,204]])assert.deepEqual(sv.cardById('sv3pt5-'+a).effect,sv.cardById('sv3pt5-'+b).effect);
+});
+function trainer(s,side,id){const a=core.legalActions(s,side).find(a=>a.type==='trainer'&&a.cardId===id);assert.ok(a,JSON.stringify(core.legalActions(s,side)));core.applyAction(s,side,a);}
+for(const side of ['player','opponent']){
+ test(side+' Erika chooses only Basic Pokémon from opponent hand, benches and switches exactly that card',()=>{
+  const {s,us,them}=scene(side,'sv3pt5-114');them.bench.pop();us.hand=[{uid:'erika',cardId:'sv3pt5-203'}];them.hand=[{uid:'basic',cardId:'sv3pt5-1'},{uid:'evo',cardId:'sv3pt5-2'},{uid:'trainer',cardId:'sv3pt5-158'}];const old=them.active;
+  trainer(s,side,'sv3pt5-203');assert.equal(s.phase,'effectChoice');const actions=core.legalActions(s,side);assert.equal(actions.length,1);assert.equal(actions[0].choiceHandIndex,0);core.applyAction(s,side,actions[0]);assert.equal(them.active.uid,'basic');assert.ok(them.bench.includes(old));assert.deepEqual(them.hand.map(x=>x.uid),['evo','trainer']);assert.equal(us.sm10SupporterTurns["Erika's Invitation"],8);
+  const target=them.active;attack(s,side);assert.equal(target.damage,70);
+ });
+ test(side+' Giovanni returns Basic or Special Energy to the opponent, then attaches a physical hand Energy to own Active',()=>{
+  for(const special of [false,true]){
+   const {s,us,them}=scene(side,'sv3pt5-112');them.active=core.makePokemonSlot('sv3pt5-6',1,'target');them.active.energy=special?{}:{Water:1};them.active.specialEnergy=special?[{uid:'special',cardId:'base1-96'}]:[];them.hand=[];us.hand=[{uid:'gio',cardId:'sv3pt5-197'},{uid:'hand-energy',cardId:'base1-99'}];us.handEnergyUsed=true;const old=us.active.energy.Grass;
+   trainer(s,side,'sv3pt5-197');assert.equal(s.phase,'effectChoice');core.applyAction(s,side,core.legalActions(s,side)[0]);assert.equal(them.hand.length,1);assert.equal(them.hand[0].cardId,special?'base1-96':'neo1-111');assert.equal(s.phase,'effectChoice');const choices=core.legalActions(s,side);assert.equal(choices.length,1);core.applyAction(s,side,choices[0]);assert.equal(us.active.energy.Grass,old+1);assert.equal(us.hand.length,0);assert.equal(us.sm10SupporterTurns["Giovanni's Charisma"],8);
+   const target=them.active;attack(s,side,1);assert.equal(target.damage,180);
+  }
+ });
+ test(side+' named attack bonuses expire and do not accept a different Supporter',()=>{
+  for(const [n,index,base,boost,name] of [[112,1,40,140,"Giovanni's Charisma"],[114,0,10,60,"Erika's Invitation"]])for(const mode of ['same','previous','different']){
+   const {s,us,them}=scene(side,'sv3pt5-'+n);them.active=core.makePokemonSlot('sv3pt5-6',1,'target');us.supporterUsed=true;us.sm10SupporterTurns={[mode==='different'?"Daisy's Help":name]:mode==='previous'?7:8};const target=them.active;attack(s,side,index);assert.equal(target.damage,base+(mode==='same'?boost:0));
+  }
+ });
+ test(side+' Persian can search alternate artwork of Giovanni without consuming a Supporter play',()=>{
+  const {s,us}=scene(side,'sv3pt5-53');us.hand=[];us.deck=[{uid:'gio-search',cardId:'sv3pt5-204'},{uid:'other',cardId:'sv3pt5-203'}];const a=core.legalActions(s,side).find(a=>a.type==='ability'&&a.target==='active');assert.ok(a,JSON.stringify(core.legalActions(s,side)));core.applyAction(s,side,a);const pick=core.legalActions(s,side).find(x=>x.choiceCardId==='sv3pt5-204');assert.ok(pick,JSON.stringify(core.legalActions(s,side)));core.applyAction(s,side,pick);assert.equal(us.hand[0].uid,'gio-search');assert.equal(!!us.supporterUsed,false);
  });
 }

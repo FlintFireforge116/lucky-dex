@@ -38,6 +38,8 @@ const optional=(label,effect)=>({type:'chooseOption',options:[{label:'Do not use
 // 151 stage 5: shared attack copying, HP modifiers and bench synergy.
 function stage5Attack(a){
  const t=a.text||'';
+ if(a.name==='Charismatic Drill'&&t==="If you played Giovanni's Charisma from your hand during this turn, this attack does 140 more damage.")return {type:'bonusDamage',amount:140,condition:{type:'sm10Supporter',name:"Giovanni's Charisma"}};
+ if(a.name==='Tactful Tangling'&&t==="If you played Erika's Invitation from your hand during this turn, this attack does 60 more damage.")return {type:'bonusDamage',amount:60,condition:{type:'sm10Supporter',name:"Erika's Invitation"}};
  if(a.name==='Tentacular Panic'&&t==="Flip a coin until you get tails. This attack does 90 damage for each heads. If the first flip is tails, your opponent's Active Pokémon is now Confused.")return {type:'coinDamage',coins:'untilTails',amount:90,mode:'replace',firstTailStatus:'confusion'};
  if(a.name==='Thumpalanche'&&t==='Discard the top 5 cards of your deck. This attack does 80 damage for each Pokémon with a Retreat Cost of exactly 4 that you discarded in this way.')return {type:'topDeckCountDamage',count:5,amount:80,filter:{kind:'pokemon',retreat:4},discardAll:true};
  if(a.name==='Bang Boom Chain'&&t==='Before doing damage, you may discard any number of Pokémon Tools from your Pokémon. This attack does 40 more damage for each card you discarded in this way.')return {type:'sm7Rule',rule:'swsh4FlyingFury'};
@@ -59,6 +61,8 @@ function stage5Ability(a){
  return null;
 }
 function stage5Trainer(c,text){
+ if(c.name==="Erika's Invitation"&&text==="Your opponent reveals their hand, and you put a Basic Pokémon you find there onto your opponent's Bench. If you put a Pokémon onto their Bench in this way, switch in that Pokémon to the Active Spot.")return {type:'sm7Rule',rule:'sv151Erika'};
+ if(c.name==="Giovanni's Charisma"&&text==="Put an Energy attached to your opponent's Active Pokémon into their hand. If you do, attach an Energy card from your hand to your Active Pokémon.")return {type:'sm7Rule',rule:'sv151Giovanni'};
  if(c.name==="Daisy's Help"&&text==='Draw 2 cards. Look at your face-down Prize cards.')return seq({type:'draw',amount:2},{type:'sm7Rule',rule:'sm8EyeOpener'});
  if(c.name==='Grabber'&&text==='Your opponent reveals their hand, and you put a Pokémon you find there on the bottom of their deck.')return {type:'sm7Rule',rule:'swsh2Oleana',filter:{kind:'pokemon'}};
  if(c.name==='Leftovers'&&text==='At the end of your turn, if the Pokémon this card is attached to is in the Active Spot, heal 20 damage from it.')return {type:'triggeredEffect',event:'endTurn',turn:'owner',activeOnly:true,effect:heal(20)};
@@ -234,7 +238,6 @@ function makeCard(c){
  if(c.kind==='pokemon'){
   const attacks=c.attacks.map(a=>{const effect=attackEffect(a);if(effect.type==='unsupported')reasons.push('Unimplemented attack: '+a.name);return {name:a.name,cost:a.cost.map(t=>codes[t]).join(''),damage:a.damage.includes('×')?0:Number(a.damage.match(/\d+/)?.[0]||0),damageText:a.damage||null,text:a.text,effect};});
   const abilities=c.abilities.map(a=>{const implemented=stage2Ability(a);if(!implemented)reasons.push('Unimplemented Ability: '+a.name);return {name:a.name,text:a.text,printedPowerType:'ability',disabledByStatus:false,...(implemented||{type:'passive',effect:unsupported})};});
-  if(c.name==='Persian')reasons.push('Named 151 Trainer dependency awaits implementation');
 
   if(/^Antique /.test(c.evolvesFrom||''))reasons.push('Antique Fossil evolution dependency not implemented');
   const ex=c.subtypes.includes('ex'),energyTypes=[...new Set(c.attacks.flatMap(a=>a.cost).filter(t=>t!=='Colorless'))];
