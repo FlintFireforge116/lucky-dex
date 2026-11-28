@@ -3071,6 +3071,7 @@
         const scoopBlocked=effects.scoopUpBlocked(state,side,slot,data.cardById);
         const teleport=!scoopBlocked&&state.format==='classic'&&cause==='attack'&&source?.side===foeSide&&source?.attack&&activeToolsOf(state,slot).some(r=>r.cardId==='SNAPFOUNJA-084');
         const swsh11AttackDamageKO=state.format==='classic'&&eventSource?.attack&&eventSource.side===foeSide&&Number(eventSource.turn)===Number(state.turnNumber)&&Number(eventSource.damage)>0&&eventSource.damageKo!==false;
+        let sv4Evanescent=0;if(state.format==='classic'&&countsAsKnockout&&sm10WasActive&&['sv4-3','sv4-217'].includes(slot.cardId)&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){const heads=flipTurnCoin(state,side);sv4Evanescent=heads?1:0;state.log.push({type:'coin',side,reason:'Evanescent',heads,results:[heads]});}
         const sv4CapePrize=swsh11AttackDamageKO&&effects.matchesFilter(card,{hasRuleBox:false})?activeToolsOf(state,slot).filter(r=>['sv4-166','sv4-265'].includes(r.cardId)).length:0;
         const swsh11Gift=swsh11AttackDamageKO&&effects.activeSpecialEnergy(state,slot,data.cardById).some(r=>r.cardId==='swsh11-171');
         let sv2NoPrize=false;if(state.format==='classic'&&countsAsKnockout&&slot.cardId==='sv2-126'&&!effects.abilitiesSuppressed(state,side,slot,data.cardById)){const heads=flipTurnCoin(state,side);sv2NoPrize=heads;state.log.push({type:'coin',side,reason:'Shattering Crystal',heads,results:[heads]});}
@@ -3205,7 +3206,7 @@
           const swsh7Flicker=awardsPrize&&slot.swsh7ShadowFlicker?.side===foeSide&&slot.swsh7ShadowFlicker.turn===state.turnNumber&&state.activeSide===foeSide&&resume!=='advanceTurn'?1:0;
           const criticalBite=awardsPrize&&swsh11AttackDamageKO&&eventSource.cardId==='swsh12-105'&&foe.lastAttackName==='Critical Bite'?2:0;
           const czStarOrder=awardsPrize&&sm10WasActive&&cause==='attack'&&source?.attack&&source.side===foeSide&&source.turn===state.turnNumber&&source.damage>0&&foe.czStarOrderTurn===state.turnNumber&&data.cardById(source.cardId)?.pokemonV&&data.cardById(source.cardId)?.stage==='Basic'&&(card?.pokemonVSTAR||card?.pokemonVMAX)?1:0;
-          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)-medal-island-swsh7Ribbon+swsh7Flicker+sm12Bonus+greedy+beast+beastBringer-blackMarket+sm4Glutton+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+criticalBite+xy10Endgame+sm2Extra-bw9LifeDew+swsh5DoubleDip+czStarOrder+sv4CapePrize):0;
+          const prizeCount=awardsPrize?Math.max(0,prizeValue(card)-medal-island-swsh7Ribbon+swsh7Flicker+sm12Bonus+greedy+beast+beastBringer-blackMarket+sm4Glutton+extraMoonSkip+arceusBeltBonus+arceusExtra+hgss3SpaceVirus+bw8Overflow+deltaPlus+criticalBite+xy10Endgame+sm2Extra-bw9LifeDew+swsh5DoubleDip+czStarOrder+sv4CapePrize-sv4Evanescent):0;
           awarded=Math.min(prizeCount,Math.max(0,foe.prizes.length-(state.pendingPrizeClaims||[]).filter(q=>q.side===foeSide).reduce((n,q)=>n+q.remaining,0)));
           if(awarded){state.pendingPrizeClaims=state.pendingPrizeClaims||[];state.pendingPrizeClaims.push({side:foeSide,remaining:awarded,...(swsh3Smoke?{discardInstead:true}:{})});}
           state.log.push({type:'ko',side,cardId:card.id,turnNumber:state.turnNumber,prizesTaken:foe.prizesTaken,awarded});
@@ -3489,7 +3490,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
     }
     const validEnergyTarget=slot=>slot&&!slot.gymEnergyLock&&(!energyTextActive||card.id!=='neo4-16'||/^(?:Light |Shining )/.test(data.cardById(slot.cardId)?.name||''));if(!validEnergyTarget(slot))return false;if(battery&&!['Vikavolt','Vikavolt-GX'].includes(data.cardById(slot.cardId)?.name))return false;if(!extra&&!battery&&!crazy&&s.handEnergyUsed&&!(s.sm8Harmonics?.turn===state.turnNumber&&s.sm8Harmonics?.uid===slot.uid&&pokemonOn(s).some(p=>p.cardId==='sm8-67'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))&&s.xy5GrowthBonus?.targetUid!==slot.uid&&Number(s.sm1UnlimitedHandEnergyTurn)!==Number(state.turnNumber))return false;const mon=data.cardById(slot.cardId),energyType=card.basicEnergy?(card.energyType||card.subtype):card.effect?.provides&&Object.keys(card.effect.provides)[0];
        if(energyTextActive&&['sm10-190','sm10-234'].includes(card.id)&&!['Stage 1','Stage 2','BREAK'].includes(mon?.stage))return false;
-       if(energyTextActive&&card.id==='xy3-103'&&!mon?.types?.includes('Grass'))return false;
+      if(energyTextActive&&card.id==='xy3-103'&&!mon?.types?.includes('Grass'))return false;
        if(energyTextActive&&['xy3-104','xy10-115'].includes(card.id)&&!mon?.types?.includes('Fighting'))return false;
        if(energyTextActive&&card.id==='xy4-112'&&!mon?.types?.includes('Psychic'))return false;
        if(energyTextActive&&card.id==='xy5-143'&&!mon?.types?.includes('Metal'))return false;
@@ -3558,6 +3559,7 @@ const target=slotForTarget(s,action.target,action.benchIndex);if(card.id==='pl2-
         s.xy5GrowthBonus={turn:state.turnNumber,targetUid:target.uid};
       if(s.handEnergyUsed)delete s.sm8Harmonics;else if(state.format==='classic'&&pokemonOn(s).some(p=>p.cardId==='sm8-67'&&!effects.abilitiesSuppressed(state,side,p,data.cardById)))s.sm8Harmonics={turn:state.turnNumber,uid:target.uid};
       s.handEnergyUsed=true;}
+       if(energyTextActive&&card.id==='sv4-182'&&!effects.healingIsBlocked(state,target,data.cardById)){const before=Number(target.damage||0);target.damage=Math.max(0,before-30);if(target.damage<before)target.xy8HealedTurn=Number(state.turnNumber);state.log.push({type:'sv4MedicalEnergy',side,targetUid:target.uid,healed:before-target.damage});}
       if(energyTextActive&&card.id==='xy3-103'&&!effects.healingIsBlocked(state,target,data.cardById)){target.damage=Math.max(0,Number(target.damage||0)-30);state.log.push({type:'xy3HerbalEnergy',side,targetUid:target.uid,healed:30});}
       if(card.holonEnergyPokemon&&['ex11-21','ex11-22','ex13-44'].includes(card.id)){
         const eligible=[...Object.entries(target.energy||{}).filter(([,n])=>Number(n)>0).map(([type])=>({type,label:'Return '+type+' Basic Energy'})),
