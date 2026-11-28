@@ -140,6 +140,7 @@ function stage3Trainer(c,text){
 }
 
 function stage2Attack(a){
+ if(a.name==='Overthink'&&a.text==="During your opponent's next turn, whenever they flip a coin, treat it as tails.")return {type:'sm7Rule',rule:'sv151Overthink'};
  const third=stage3Attack(a);if(third)return third;
  const t=a.text||'';
  if(a.name==='Dragon Pulse'&&t==='Discard the top 2 cards of your deck.')return {type:'discardTop',side:'self',amount:2};

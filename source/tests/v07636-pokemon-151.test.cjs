@@ -10,7 +10,7 @@ test('pinned 151 catalogue has all 207 numbered prints with exact identity, rule
   if(c.kind==='pokemon'){assert.deepEqual([c.hp,c.types,c.evolvesFrom,c.retreat,c.weakness,c.resistance],[p.hp,p.types,p.evolvesFrom,p.retreat,p.weakness,p.resistance]);assert.deepEqual(c.attacks.map(a=>[a.name,a.cost,a.damageText||'',a.text]),p.attacks.map(a=>[a.name,a.cost.map(x=>codes[x]).join(''),a.damage,a.text]));assert.deepEqual(c.abilities.map(a=>[a.name,a.text]),p.abilities.map(a=>[a.name,a.text]));for(const a of c.attacks)if(c.battleEnabled){assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}: ${fx.validateEffect(a.effect).join('; ')}`);assert.equal(a.effect.type==='noop',!a.text);}}
   if(c.kind==='trainer')assert.equal(c.text,p.rules[0]);if(!c.battleEnabled){assert.equal(c.deckEligible,false);assert.ok(c.support.reasons.length);}
  }
- for(const n of [65,27,54])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,false);
+ for(const n of [65,27])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,false);
  for(const n of [1,2,13,17,32,50,63,83,86,115,206,207])assert.equal(sv.cardById('sv3pt5-'+n).battleEnabled,true);
  assert.equal(sv.cardById('sv3pt5-207').deckEligible,false);
  assert.ok(sv.CARDS.filter(c=>c.battleEnabled).length>=50);
@@ -33,7 +33,7 @@ for(const side of ['player','opponent']){
 test('151 stage 2 exact shared effects and explicit remaining dependencies',()=>{
  const by=n=>sv.cardById('sv3pt5-'+n);
  for(const n of [3,4,8,10,18,22,25,35,38,52,55,56,59,82,88,89,97,98,120,123,125,126,127,129,130,134,135,136,144,149,155,159,165])assert.ok(by(n).battleEnabled,`${n}: ${by(n).support.reasons}`);
- for(const n of [65,27,54])assert.equal(by(n).battleEnabled,false,by(n).name);
+ for(const n of [65,27])assert.equal(by(n).battleEnabled,false,by(n).name);
  for(const c of sv.CARDS.filter(c=>c.battleEnabled)){
    for(const a of c.abilities||[])assert.ok(fx.supportsEffect(a.effect),`${c.id} ${a.name}`);
    if(c.kind==='trainer')assert.ok(fx.supportsEffect(c.effect),c.id);
@@ -375,7 +375,7 @@ for(const side of ['player','opponent']){
 }
 
 // Stage 12: Active replacement, Prize interception and attack-damage KO rescue.
-test('151 stage 12 enables Ditto, Chansey and Raichu',()=>{for(const n of [26,113,132])assert.ok(sv.cardById('sv3pt5-'+n).battleEnabled);assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length,201);});
+test('151 stage 12 enables Ditto, Chansey and Raichu',()=>{for(const n of [26,113,132])assert.ok(sv.cardById('sv3pt5-'+n).battleEnabled);assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length>=201,true);});
 for(const side of ['player','opponent']){
  test(side+' Transformative Start is first-turn Active-only and replaces Ditto with a non-Ditto Basic, discarding attachments',()=>{
   for(const mode of ['replace','skip','later','bench']){const {s,us,them}=scene(side,'sv3pt5-132');const ditto=us.active;us.turnCount=mode==='later'?2:1;s.turnNumber=side==='player'?1:2;ditto.energy={Lightning:1};ditto.tool={uid:'ditto-tool',cardId:'sv3pt5-163'};us.deck=[132,2,4].map(n=>({uid:'ditto-search'+n,cardId:'sv3pt5-'+n}));if(mode==='bench'){[us.active,us.bench[0]]=[us.bench[0],ditto];ditto.benchSlot=0;us.active.benchSlot=null;}
@@ -387,4 +387,19 @@ for(const side of ['player','opponent']){
  test(side+' Electrical Grounding moves just one Lightning Energy per Raichu before ally attack KO, optional and suppressed',()=>{
   const foe=side==='player'?'opponent':'player';for(const mode of ['move','skip','suppressed']){const {s,us,them}=scene(foe,'sv3pt5-6');them.active=core.makePokemonSlot('sv3pt5-1',1,'ground-victim');them.active.energy={Lightning:2,Fire:1};const r=them.bench[0]=Object.assign(core.makePokemonSlot('sv3pt5-26',1,'raichu'),{benchSlot:0});if(mode==='suppressed'){s.xy7HexManiacUntil=s.turnNumber;}attack(s,foe,1);if(mode==='suppressed'){assert.notEqual(s.pendingChoice?.special,'sv151ElectricalGrounding');assert.equal(r.energy.Lightning,undefined);continue;}assert.equal(s.pendingChoice?.special,'sv151ElectricalGrounding');const pick=core.legalActions(s,side).find(a=>mode==='skip'?a.choiceSkip:!a.choiceSkip);assert.ok(pick);core.applyAction(s,side,pick);assert.equal(r.energy.Lightning||0,mode==='move'?1:0);assert.equal(them.energyDiscard.Lightning,mode==='move'?1:2);}
  });
+}
+
+// Stage 13: next-turn coin restriction, both shared and legacy coin routes.
+test('151 stage 13 enables both Psyduck prints only',()=>{for(const n of [54,175])assert.ok(sv.cardById('sv3pt5-'+n).battleEnabled);assert.equal(sv.CARDS.filter(c=>c.battleEnabled).length,203);});
+for(const side of ['player','opponent']){
+ const foe=side==='player'?'opponent':'player';
+ test(side+' Overthink marks next opposing turn, not the other player; shared flips advance RNG and override guaranteed heads',()=>{
+  const {s,us,them}=scene(side,'sv3pt5-54');attack(s,side);assert.equal(s.activeSide,foe);assert.equal(them.sv151OverthinkTurn,them.turnCount);assert.ok(fx.overthinkForcesTails(s,foe));assert.equal(fx.overthinkForcesTails(s,side),false);
+  let calls=0;them.forceFirstCoinHeadTurn=s.turnNumber;them.forceFirstCoinHeadUsed=false;const ctx={state:s,side:foe,foeSide:side,attacker:them.active,cardById:data.cardById,isAttack:true,random:()=>{calls++;return 0;}};assert.equal(fx.coin(ctx),false);assert.equal(fx.coin(ctx),false);assert.equal(calls,2);assert.equal(fx.coin({...ctx,side,foeSide:foe,attacker:us.active}),true);
+  const next=core.legalActions(s,foe).find(a=>a.type==='endTurn');assert.ok(next);core.applyAction(s,foe,next);assert.equal(them.sv151OverthinkTurn,undefined);assert.equal(fx.overthinkForcesTails(s,foe),false);
+ });
+ test(side+' Overthink forces legacy confusion attack gate to tails even with heads seed',()=>{
+  const {s,them}=scene(side,'sv3pt5-54');attack(s,side);them.active.conditions={confusion:true};s.rngState=1;const target=them.active;const a=core.legalActions(s,foe).find(a=>a.type==='attack');assert.ok(a);core.applyAction(s,foe,a);assert.ok(s.log.some(x=>x.type==='coin'&&x.side===foe&&x.status==='confusion'&&x.heads===false));assert.equal(target.damage,30);
+ });
+ test(side+' Overthink does not force Pokémon Checkup recovery flips',()=>{const {s,them}=scene(side,'sv3pt5-54');attack(s,side);them.active.conditions={sleep:true};s.rngState=1;const next=core.legalActions(s,foe).find(a=>a.type==='endTurn');assert.ok(next);core.applyAction(s,foe,next);assert.ok(s.log.some(x=>x.type==='coin'&&x.side===foe&&x.status==='sleep'&&x.heads===true));});
 }
